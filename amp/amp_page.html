@@ -1,0 +1,137 @@
+<!doctype html>
+<html amp lang="en">
+  <head>
+      <!--
+      This is an example AMP page. This example includes:
+
+      amp_page.html     host on publisher's amp domain (amp.publisher.com)
+      amp_page.html     (canonical) host on publisher's main domain (publisher.com -- implied, not
+                            part of example)
+      remote.html       host on publisher's amp-x-domain domain (amp-x-domain.publisher.com)
+      creative.html     script tag returned by ad server to fill with Prebid demand
+
+      -->
+    <meta charset="utf-8">
+    <title>Container Tag AMP demo page</title>
+    <link rel="canonical" href="http://example.ampproject.org/article-metadata.html" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+      <!-- The following meta tag specifies the path to the publisher-hosted file to use as the
+        AMP x-domain host. The domain for ./remote.html must be different from the domain for
+        ./amp_page.html to be a cross domain (secure, unfriendly) iframe.  In this example the
+        domains and ports are:
+            https://publisher.com:9999/amp_page.html
+                and
+            https://amp.publisher.com:5000/remote.html
+
+            Further reading
+            AMP documentation <amp-ad> spec
+            https://www.ampproject.org/docs/reference/components/amp-ad
+            See sections on "Running ads from a custom domain" and "Enhance incoming ad
+            configuration" for more details on techniques used here.
+         -->
+    <meta name="amp-3p-iframe-src" content="https://localhost:5000/remote.html">
+
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "NewsArticle",
+        "headline": "Open-source framework for publishing content",
+        "datePublished": "2015-10-07T12:02:41Z",
+        "image": [
+          "logo.jpg"
+        ]
+      }
+    </script>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+  </head>
+  <body>
+    <h1>Container Tag AMP demo page</h1>
+<div>
+  <h2>SLOT 1</h2>
+    <amp-ad
+      width="728"
+      height="90"
+      layout="fixed"
+      type="doubleclick"
+      json='
+        {
+          "prebid":{
+            "requestBidsDuration":1000,
+            "adUnits":[
+              {
+                "code":"/19968336/header-bid-tag-1","sizes":[[300,250],[300,600],[300,250],[100,100]],
+                "bids":[
+                  {"bidder":"aol","params":{"network":"9599.1","placement":3675022}}
+                ]
+              },
+              {
+                "code":"/19968336/header-bid-tag-2","sizes":[[300,250],[300,600],[300,250],[100,100]],
+                "bids":[
+                  {"bidder":"aol","params":{"network":"9599.1","placement":3675022}}
+                ]
+              }
+            ]
+          }
+        }'
+      data-slot="/19968336/header-bid-tag-1">
+    </amp-ad>
+</div>
+<div>
+  <h2>SLOT 2</h2>
+  <amp-ad
+      width="728"
+      height="90"
+      layout="fixed"
+      type="doubleclick"
+      json='
+        {
+          "prebid":{"requestBidsDuration":1000,"adUnits":[{"code":"/19968336/header-bid-tag-1","sizes":[[300,250],[300,600],[300,250],[100,100]],
+      "bids":[
+        {"bidder":"aol","params":{"network":"9599.1","placement":3675024}}]},
+      {"code":"/19968336/header-bid-tag-2","sizes":[[300,250],[300,600],[300,250],[100,100]],
+        "bids":[
+        {"bidder":"aol","params":{"network":"9599.1","placement":3675024}}]}]}}'
+      data-slot="/19968336/header-bid-tag-2">
+    </amp-ad>
+</div>
+<!--    <div>
+      <h2>SLOT 3</h2>
+      <amp-ad
+        width="300"
+        height="250"
+        layout="fixed"
+        type="doubleclick"
+        json='{"targeting":{"requestBidsDuration":1000,"adUnits":[
+        {"code":"/19968336/header-bid-tag-1","sizes":[[300,250],[300,600],[300,250],[100,100]],
+          "bids":[
+            {"bidder":"aol","params":{"network":"9599.1","placement":3675022}}
+          ]},
+        {"code":"/19968336/header-bid-tag-2","sizes":[[300,250],[300,600],[300,250],[100,100]],
+          "bids":[
+            {"bidder":"aol","params":{"network":"9599.1","placement":3675026}}
+          ]}
+        ]}}'
+        data-slot="/19968336/header-bid-tag-1">
+      </amp-ad>
+    </div>
+   <div>
+      <h2>SLOT 4</h2>
+      <amp-ad
+              width="300"
+              height="250"
+              layout="fixed"
+              type="doubleclick"
+              json='{"targeting":{"requestBidsDuration":1000,"adUnits":[{"code":"/19968336/header-bid-tag-1","sizes":[[300,250],[300,600],[300,250],[100,100]],
+      "bids":[
+        {"bidder":"aol","params":{"network":"9599.1","placement":3675024}}]},
+      {"code":"/19968336/header-bid-tag-2","sizes":[[300,250],[300,600],[300,250],[100,100]],
+        "bids":[
+        {"bidder":"aol","params":{"network":"9599.1","placement":3675027}}]}]}}'
+              data-slot="/19968336/header-bid-tag-2">
+      </amp-ad>-
+    </div>
+  </body>-->
+</html>
