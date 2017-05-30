@@ -13,7 +13,7 @@ const input = `/** INSERT ADAPTERS - DO NOT EDIT OR REMOVE */
 const delimiter = '/*!ADAPTER REGISTER DELIMITER*/';
 
 const getAdaptersWithDelimiter = () => {
-  return delimiter +'var AardvarkAdapter = require(\'./adapters/aardvark.js\');\n    ' +
+  return delimiter + 'var AardvarkAdapter = require(\'./adapters/aardvark.js\');\n    ' +
     'exports.registerBidAdapter(new AardvarkAdapter(), \'aardvark\');\n' +
     delimiter +
     'var AolAdapter = require(\'./adapters/aol.js\');\n    ' +
@@ -37,10 +37,10 @@ describe('adapterLoader.js', () => {
       'aol',
       'appnexus',
       'rubicon',
-      {"appnexus":{"alias":"pagescience"}},
-      {"appnexusAst":{"supportedMediaTypes":["video"]}}
+      {'appnexus': {'alias': 'pagescience'}},
+      {'appnexusAst': {'supportedMediaTypes': ['video']}}
     ];
-    const loader = proxyquire('../../../loaders/adapterLoader', {'./getAdapters' : getAdapterStub});
+    const loader = proxyquire('../../../loaders/adapterLoader', {'./getAdapters': getAdapterStub});
     let output = loader(input);
     expect(output).to.equal(getAdaptersWithDelimiter());
   });
