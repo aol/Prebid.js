@@ -24,7 +24,7 @@ export function ajax(url, callback, data, options = {}) {
     let useXDomainRequest = false;
     let method = options.method || (data ? 'POST' : 'GET');
 
-    let callbacks = typeof callback === 'object' ? callback : {
+    let callbacks = callback || {
       success: function() {
         utils.logMessage('xhr success');
       },
