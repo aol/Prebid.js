@@ -42,7 +42,9 @@ This URL is designed specifically for the Container Tag library and it supports 
 
 > A free and open source library for publishers to quickly implement header bidding.
 
-This README is for developers who want to contribute to Prebid.js.  For user-facing documentation, see [Prebid.org](http://prebid.org).
+This README is for developers who want to contribute to Prebid.js.
+Additional documentation can be found at [the Prebid homepage](http://prebid.org).
+Working examples can be found in [the developer docs](http://prebid.org/dev-docs/getting-started.html).
 
 **Table of Contents**
 
@@ -59,13 +61,13 @@ This README is for developers who want to contribute to Prebid.js.  For user-fac
     $ cd Prebid.js
     $ yarn install
 
-Prebid now supports the `yarn` npm client. This is an alternative to using `npm` for package management, though `npm` will continue to work as before.
+Prebid also supports the `yarn` npm client. This is an alternative to using `npm` for package management, though `npm` will continue to work as before.
 
-For more info about yarn see https://yarnpkg.com
+For more info, see [the Yarn documentation](https://yarnpkg.com).
 
 <a name="Build"></a>
 
-## Build for Dev
+## Build for Development
 
 To build the project on your local machine, run:
 
@@ -181,6 +183,8 @@ A watch is also in place that will run continuous tests in the terminal as you e
 
 Many SSPs, bidders, and publishers have contributed to this project. [60+ Bidders](https://github.com/prebid/Prebid.js/tree/master/src/adapters) are supported by Prebid.js.
 
+For guidelines, see [Contributing](./CONTRIBUTING.md).
+
 Our PR review process can be found [here](https://github.com/prebid/Prebid.js/tree/master/pr_review.md).
 
 ### Add a Bidder Adapter
@@ -191,9 +195,9 @@ Please **do NOT load Prebid.js inside your adapter**. If you do this, we will re
 
 ### Code Quality
 
-Code quality is defined by `.jscs` and `.jshint` files and errors are reported in the terminal.
+Code quality is defined by `.eslintrc` and errors are reported in the terminal.
 
-If you are contributing code, you should configure your editor with the provided `.jscs` and `.jshint` settings.
+If you are contributing code, you should [configure your editor](http://eslint.org/docs/user-guide/integrations#editors) with the provided `.eslintrc` settings.
 
 ### Unit Testing with Karma
 
