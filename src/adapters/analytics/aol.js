@@ -151,7 +151,7 @@ export default Object.assign(adapter({
 
   reportEvent(event, adUnit) {
     let url = this.buildEventUrl(event, adUnit);
-    ajax(url, null, null, { withCredentials: true });
+    ajax(url, () => {}, null, { withCredentials: true });
   },
 
   getBaseSchema(eventId, adUnit) {
