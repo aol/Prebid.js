@@ -14,8 +14,8 @@ const utils = require('../../utils');
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
 const BID_WON = CONSTANTS.EVENTS.BID_WON;
-const AOL_BIDDER_CODE = 'aol';
-const NEXAGE_BIDDER_CODES = {
+const AOL_BIDDERS_CODES = {
+  aol: 'aol',
   onemobile: 'onemobile',
   onedisplay: 'onedisplay'
 };
@@ -315,7 +315,7 @@ function initAdUnit(adUnitCode) {
 }
 
 function isAolBidder(bidderCode) {
-  return NEXAGE_BIDDER_CODES[bidderCode] || bidderCode === AOL_BIDDER_CODE;
+  return AOL_BIDDERS_CODES[bidderCode];
 }
 
 function addAolParams(adUnit, adUnitsConf, bidsReceived) {
@@ -329,7 +329,7 @@ function addAolParams(adUnit, adUnitsConf, bidsReceived) {
   adUnitsConf.forEach(adUnitConf => {
     if (adUnitConf.code === adUnit.code) {
       adUnitConf.bids.forEach(adUnitBid => {
-        if (isAolBidder(adUnitBid.bidder)) {
+        if (isAolBidder(adUnitBid.bidder) && adUnitBid.params.placement && adUnitBid.params.network) {
           adUnit.aolParams = adUnitBid.params;
           adUnit.aolParams.pubapiId = pubapiId;
           adUnit.aolParams.currencyCode = currencyCode;
