@@ -329,7 +329,7 @@ function addAolParams(adUnit, adUnitsConf, bidsReceived) {
   adUnitsConf.forEach(adUnitConf => {
     if (adUnitConf.code === adUnit.code) {
       adUnitConf.bids.forEach(adUnitBid => {
-        if (isAolBidder(adUnitBid.bidder) && adUnitBid.params.placement && adUnitBid.params.network) {
+        if (isAolBidder(adUnitBid.bidder)) {
           adUnit.aolParams = adUnitBid.params;
           adUnit.aolParams.pubapiId = pubapiId;
           adUnit.aolParams.currencyCode = currencyCode;
