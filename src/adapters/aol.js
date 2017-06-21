@@ -244,6 +244,14 @@ const AolAdapter = function AolAdapter() {
     }
   }
 
+  function _isNexageRequestGet(bid) {
+    return bid.params.dcn && bid.params.pos;
+  }
+
+  function _isMarketplaceRequest(bid) {
+    return bid.bidder === BIDDER_CODE && bid.params.placement && bid.params.network;
+  }
+
   function _callBids(params) {
     utils._each(params.bids, bid => {
       let apiUrl;
@@ -252,9 +260,10 @@ const AolAdapter = function AolAdapter() {
         withCredentials: true
       };
       let isNexageRequestPost = _isNexageRequestPost(bid);
-      if (bid.params.placement && bid.params.network) {
-        apiUrl = _buildMarketplaceUrl(bid);
-      } else if(bid.params.dcn && bid.params.pos || isNexageRequestPost) {
+      let isNexageRequestGet = _isNexageRequestGet(bid);
+      let isMarketplaceRequest = _isMarketplaceRequest(bid);
+
+      if (isNexageRequestGet || isNexageRequestPost) {
         apiUrl = _buildNexageApiUrl(bid);
         if (isNexageRequestPost) {
           data = bid.params;
@@ -264,7 +273,10 @@ const AolAdapter = function AolAdapter() {
           options.method = 'POST';
           options.contentType = 'application/json';
         }
+      } else if (isMarketplaceRequest) {
+        apiUrl = _buildMarketplaceUrl(bid);
       }
+
       if (apiUrl) {
         ajax(apiUrl, response => {
           // Needs to be here in case bidderSettings are defined after requestBids() is called
