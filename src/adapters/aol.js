@@ -3,6 +3,7 @@ const ajax = require('../ajax.js').ajax;
 const bidfactory = require('../bidfactory.js');
 const bidmanager = require('../bidmanager.js');
 const constants = require('../constants.json');
+const BaseAdapter = require('./adapter.js');
 
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
@@ -299,9 +300,12 @@ const AolAdapter = function AolAdapter() {
     });
   }
 
-  return {
-    callBids: _callBids
-  };
+  return Object.assign(BaseAdapter.createNew(BIDDER_CODE), {
+    callBids: _callBids,
+    createNew: function () {
+      return new AolAdapter();
+    }
+  });
 };
 
 module.exports = AolAdapter;

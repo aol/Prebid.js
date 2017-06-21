@@ -69,6 +69,16 @@
     "prebidServer",
     "adsupply",
     {
+      "aol": {
+        "alias": "onemobile"
+      }
+    },
+    {
+      "aol": {
+        "alias": "onedisplay"
+      }
+    },
+    {
       "appnexus": {
         "alias": "brealtime"
       }
