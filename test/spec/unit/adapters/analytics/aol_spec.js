@@ -25,7 +25,6 @@ const ANALYTICS_EVENTS = {
 };
 
 describe('AOL analytics adapter', () => {
-
   before(() => {
     aolAnalytics.enableAnalytics({});
   });
@@ -1397,7 +1396,6 @@ describe('AOL analytics adapter', () => {
     it('should return encoded adId with extension when code or adIdExtension contains special characters', () => {
       adUnit.code = 'ad@code+';
       adUnit.adIdExtension = '$test&@adI#d/post=fix+encoding';
-
 
       expect(aolAnalytics.generateAdId(adUnit)).to.equal(encodeURIComponent(adUnit.code + '-' + adUnit.adIdExtension));
     });

@@ -3,21 +3,20 @@ import * as utils from 'src/utils';
 import AolAdapter from 'src/adapters/aol';
 import bidmanager from 'src/bidmanager';
 
-
 let getDefaultBidResponse = () => {
   return {
-    "id": "245730051428950632",
-    "cur": "USD",
-    "seatbid": [{
-      "bid": [{
-        "id": 1,
-        "impid": "245730051428950632",
-        "price": 0.09,
-        "adm": "<script>logInfo('ad');</script>",
-        "crid": "0",
-        "h": 90,
-        "w": 728,
-        "ext": {"sizeid": 225}
+    id: '245730051428950632',
+    cur: 'USD',
+    seatbid: [{
+      bid: [{
+        id: 1,
+        impid: '245730051428950632',
+        price: 0.09,
+        adm: '<script>logInfo(\'ad\');</script>',
+        crid: '0',
+        h: 90,
+        w: 728,
+        ext: {sizeid: 225}
       }]
     }]
   };
@@ -44,13 +43,12 @@ let getDefaultBidRequest = () => {
 };
 
 describe('AolAdapter', () => {
-
   let adapter;
 
   beforeEach(() => adapter = new AolAdapter());
 
   function createBidderRequest({bids, params} = {}) {
-    var bidderRequest = utils.cloneJson(getDefaultBidRequest());
+    var bidderRequest = getDefaultBidRequest();
     if (bids && Array.isArray(bids)) {
       bidderRequest.bids = bids;
     }
@@ -66,9 +64,7 @@ describe('AolAdapter', () => {
     });
 
     describe('bid request', () => {
-
       describe('Marketplace api', () => {
-
         let xhr;
         let requests;
 
@@ -224,7 +220,6 @@ describe('AolAdapter', () => {
       });
 
       describe('Nexage api', () => {
-
         let xhr;
         let requests;
 
@@ -296,13 +291,13 @@ describe('AolAdapter', () => {
             }
           }));
           expect(requests[0].url).to.contain('hb.nexage.com/bidRequest?dcn=54321123&pos=footer-2324&cmd=bid' +
-              '&param1=val1&param2=val2&param3=val3&param4=val4');
+            '&param1=val1&param2=val2&param3=val3&param4=val4');
         });
 
         it('should hit the nexage api endpoint with post data with the openrtb config', () => {
           let bidConfig = {
             id: 'id-1',
-              imp: [{
+            imp: [{
               id: 'id-2',
               banner: {
                 w: '100',
@@ -320,7 +315,7 @@ describe('AolAdapter', () => {
         });
 
         it('should not hit the nexage api endpoint with post data with the openrtb config' +
-            ' if a required parameter is missing', () => {
+          ' if a required parameter is missing', () => {
           let bidConfig = {
             id: 'id-1',
             imp: [{
@@ -339,11 +334,9 @@ describe('AolAdapter', () => {
         })
         ;
       });
-
     });
 
     describe('bid response', () => {
-
       let server;
 
       beforeEach(() => {
@@ -470,8 +463,8 @@ describe('AolAdapter', () => {
         adapter.callBids(getDefaultBidRequest());
         server.respond();
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
-        expect(addedBidResponse.ad).to.equal("<script>logInfo('ad');</script>");
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        expect(addedBidResponse.ad).to.equal('<script>logInfo(\'ad\');</script>');
         expect(addedBidResponse.cpm).to.equal(0.09);
         expect(addedBidResponse.width).to.equal(728);
         expect(addedBidResponse.height).to.equal(90);
@@ -482,19 +475,19 @@ describe('AolAdapter', () => {
       it('should be added to bidmanager including pixels from pubapi response', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<img src=\"pixel.gif\">');</script>"
+          pixels: '<script>document.write(\'<img src="pixel.gif">\');</script>'
         };
 
         server.respondWith(JSON.stringify(bidResponse));
         adapter.callBids(getDefaultBidRequest());
         server.respond();
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
         expect(addedBidResponse.ad).to.equal(
-          "<script>logInfo('ad');</script>" +
-          "<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){" +
-          "parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;" +
-          "document.write('<img src=\"pixel.gif\">');}</script>"
+          '<script>logInfo(\'ad\');</script>' +
+          '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
+          'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' +
+          'document.write(\'<img src="pixel.gif">\');}</script>'
         );
       });
 
@@ -506,7 +499,7 @@ describe('AolAdapter', () => {
         adapter.callBids(getDefaultBidRequest());
         server.respond();
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
         expect(addedBidResponse.dealId).to.equal('12345');
       });
 
@@ -525,7 +518,7 @@ describe('AolAdapter', () => {
       it('should not render pixels on pubapi response when no parameter is set', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<iframe src=\"pixels.org\"></iframe>');</script>"
+          pixels: '<script>document.write(\'<iframe src="pixels.org"></iframe>\');</script>'
         };
         server.respondWith(JSON.stringify(bidResponse));
         adapter.callBids(getDefaultBidRequest());
@@ -537,8 +530,8 @@ describe('AolAdapter', () => {
       it('should render pixels from pubapi response when param userSyncOn is set with \'bidResponse\'', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<iframe src=\"pixels.org\"></iframe>" +
-          "<iframe src=\"pixels1.org\"></iframe>');</script>"
+          pixels: '<script>document.write(\'<iframe src="pixels.org"></iframe>' +
+          '<iframe src="pixels1.org"></iframe>\');</script>'
         };
 
         server.respondWith(JSON.stringify(bidResponse));
@@ -566,8 +559,8 @@ describe('AolAdapter', () => {
         $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<iframe src=\"test.com\"></iframe>" +
-          "<iframe src=\"test2.org\"></iframe>');</script>"
+          pixels: '<script>document.write(\'<iframe src="test.com"></iframe>' +
+          '<iframe src="test2.org"></iframe>\');</script>'
         };
         server.respondWith(JSON.stringify(bidResponse));
 
