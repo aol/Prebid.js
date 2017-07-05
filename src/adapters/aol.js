@@ -11,7 +11,7 @@ $$PREBID_GLOBAL$$.aolGlobals = {
 
 const AolAdapter = function AolAdapter() {
   let showCpmAdjustmentWarning = true;
-  const pubapiTemplate = template`${'protocol'}://${'host'}/pubapi/3.0/${'network'}/${'placement'}/${'pageid'}/${'sizeid'}/ADTECH;v=2;cmd=bid;cors=yes;alias=${'alias'}${'bidfloor'};misc=${'misc'}`;
+  const pubapiTemplate = template`${'protocol'}://${'host'}/pubapi/3.0/${'network'}/${'placement'}/${'pageid'}/${'sizeid'}/ADTECH;v=2;cmd=bid;cors=yes;alias=${'alias'}${'bidfloor'}${'keyValues'};misc=${'misc'}`;
   const nexageBaseApiTemplate = template`${'protocol'}://${'host'}/bidRequest?`;
   const nexageGetApiTemplate = template`dcn=${'dcn'}&pos=${'pos'}&cmd=bid${'ext'}`;
   const MP_SERVER_MAP = {
@@ -155,10 +155,24 @@ const AolAdapter = function AolAdapter() {
       pageid: params.pageId || 0,
       sizeid: params.sizeId || 0,
       alias: params.alias || utils.getUniqueIdentifierStr(),
-      bidfloor: (typeof params.bidFloor !== 'undefined')
-        ? `;bidfloor=${params.bidFloor.toString()}` : '',
+      bidfloor: formatMarketplaceBidFloor(params.bidFloor),
+      keyValues: formatMarketplaceKeyValues(params.keyValues),
       misc: new Date().getTime() // cache busting
     });
+  }
+
+  function formatMarketplaceBidFloor(bidFloor) {
+    return (typeof bidFloor !== 'undefined') ? `;bidfloor=${bidFloor.toString()}` : '';
+  }
+
+  function formatMarketplaceKeyValues(keyValues) {
+    let formattedKeyValues = '';
+
+    utils._each(keyValues, (value, key) => {
+      formattedKeyValues += `;kv${key}=${encodeURIComponent(value)}`;
+    });
+
+    return formattedKeyValues;
   }
 
   function _buildNexageApiUrl(bid) {

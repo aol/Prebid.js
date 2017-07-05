@@ -295,6 +295,22 @@ describe('AolAdapter', () => {
           }));
           expect(requests[0].url).to.contain('bidfloor=0.8');
         });
+
+        it('should contain key values if keyValues param is present', () => {
+          adapter.callBids(createBidderRequest({
+            params: {
+              placement: 1234567,
+              network: '9599.1',
+              keyValues: {
+                age: 25,
+                height: 3.42,
+                test: 'key'
+              }
+            }
+          }));
+
+          expect(requests[0].url).to.contain('kvage=25;kvheight=3.42;kvtest=key');
+        });
       });
 
       describe('Nexage api', () => {
