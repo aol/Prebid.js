@@ -155,6 +155,18 @@ describe('AolAdapter', () => {
           expect(requests[0].url).to.contain(MARKETPLACE_URL);
         });
 
+        it('should not resolve endpoint for onedisplay bidder code when only Nexage params are present', () => {
+          let bidParams = Object.assign(getNexageGetBidParams(), getNexagePostBidParams());
+
+          adapter.callBids(createBidderRequest({
+            bids: [{
+              bidder: 'onedisplay'
+            }],
+            params: bidParams
+          }));
+          expect(requests.length).to.equal(0);
+        });
+
         it('should hit endpoint based on the region config option', () => {
           adapter.callBids(createBidderRequest({
             params: {
@@ -327,23 +339,34 @@ describe('AolAdapter', () => {
 
         it('should hit nexage api when nexage and marketplace params are present', () => {
           let bidParams = Object.assign(getNexageGetBidParams(), getMarketplaceBidParams());
+
           adapter.callBids(createBidderRequest({
             params: bidParams
           }));
-
           expect(requests[0].url).to.contain(NEXAGE_URL);
         });
 
         it('should hit nexage api via onemobile bidder code when nexage and marketplace params are present', () => {
           let bidParams = Object.assign(getNexageGetBidParams(), getMarketplaceBidParams());
+
           adapter.callBids(createBidderRequest({
             bids: [{
               bidder: 'onemobile'
             }],
             params: bidParams
           }));
-
           expect(requests[0].url).to.contain(NEXAGE_URL);
+        });
+
+        it('should not resolve endpoint for onemobile bidder code when only Marketplace params are present', () => {
+          adapter.callBids(createBidderRequest({
+            bids: [{
+              bidder: 'onemobile'
+            }],
+            params: getMarketplaceBidParams()
+          }));
+
+          expect(requests.length).to.equal(0);
         });
 
         it('should contain required params - dcn & pos', () => {
