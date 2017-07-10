@@ -14,7 +14,11 @@ const utils = require('../../utils');
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
 const BID_WON = CONSTANTS.EVENTS.BID_WON;
-const AOL_BIDDER_CODE = 'aol';
+const AOL_BIDDERS_CODES = {
+  aol: 'aol',
+  onemobile: 'onemobile',
+  onedisplay: 'onedisplay'
+};
 const analyticsType = 'endpoint';
 
 const serverMap = {
@@ -310,9 +314,13 @@ function initAdUnit(adUnitCode) {
   };
 }
 
+function isAolBidder(bidderCode) {
+  return AOL_BIDDERS_CODES[bidderCode];
+}
+
 function addAolParams(adUnit, adUnitsConf, bidsReceived) {
   const filteredBids = bidsReceived.filter(
-    bid => bid.bidderCode === AOL_BIDDER_CODE && bid.adUnitCode === adUnit.code
+    bid => isAolBidder(bid.bidderCode) && bid.adUnitCode === adUnit.code
   );
   const onlyOneBid = filteredBids.length === 1;
   const pubapiId = (onlyOneBid) ? filteredBids[0].pubapiId : '';
@@ -321,7 +329,7 @@ function addAolParams(adUnit, adUnitsConf, bidsReceived) {
   adUnitsConf.forEach(adUnitConf => {
     if (adUnitConf.code === adUnit.code) {
       adUnitConf.bids.forEach(adUnitBid => {
-        if (adUnitBid.bidder === AOL_BIDDER_CODE && adUnitBid.params.placement && adUnitBid.params.network) {
+        if (isAolBidder(adUnitBid.bidder) && adUnitBid.params.placement && adUnitBid.params.network) {
           adUnit.aolParams = adUnitBid.params;
           adUnit.aolParams.pubapiId = pubapiId;
           adUnit.aolParams.currencyCode = currencyCode;

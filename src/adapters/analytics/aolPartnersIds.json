@@ -72,5 +72,7 @@
   "pubgears": 71,
   "adsupply": 72,
   "quantcast": 73,
-  "prebidServer": 74
+  "prebidServer": 74,
+  "onemobile": 75,
+  "onedisplay": 76
 }
