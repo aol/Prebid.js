@@ -3,21 +3,20 @@ import * as utils from 'src/utils';
 import AolAdapter from 'src/adapters/aol';
 import bidmanager from 'src/bidmanager';
 
-
 let getDefaultBidResponse = () => {
   return {
-    "id": "245730051428950632",
-    "cur": "USD",
-    "seatbid": [{
-      "bid": [{
-        "id": 1,
-        "impid": "245730051428950632",
-        "price": 0.09,
-        "adm": "<script>logInfo('ad');</script>",
-        "crid": "0",
-        "h": 90,
-        "w": 728,
-        "ext": {"sizeid": 225}
+    id: '245730051428950632',
+    cur: 'USD',
+    seatbid: [{
+      bid: [{
+        id: 1,
+        impid: '245730051428950632',
+        price: 0.09,
+        adm: '<script>logInfo(\'ad\');</script>',
+        crid: '0',
+        h: 90,
+        w: 728,
+        ext: {sizeid: 225}
       }]
     }]
   };
@@ -93,9 +92,7 @@ describe('AolAdapter', () => {
     });
 
     describe('bid request', () => {
-
       describe('Marketplace api', () => {
-
         let xhr;
         let requests;
 
@@ -301,7 +298,6 @@ describe('AolAdapter', () => {
       });
 
       describe('Nexage api', () => {
-
         let xhr;
         let requests;
 
@@ -427,11 +423,9 @@ describe('AolAdapter', () => {
         })
         ;
       });
-
     });
 
     describe('bid response', () => {
-
       let server;
 
       beforeEach(() => {
@@ -579,10 +573,10 @@ describe('AolAdapter', () => {
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
         var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
         expect(addedBidResponse.ad).to.equal(
-          "<script>logInfo('ad');</script>" +
-          "<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){" +
-          "parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;" +
-          "document.write('<img src=\"pixel.gif\">');}</script>"
+          '<script>logInfo(\'ad\');</script>' +
+          '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
+          'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' +
+          'document.write(\'<img src=\"pixel.gif\">\');}</script>'
         );
       });
 

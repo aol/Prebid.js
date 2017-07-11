@@ -474,7 +474,7 @@ $$PREBID_GLOBAL$$.requestBids = function ({ bidsBackHandler, timeout, adUnits, a
     timeouts.sort((a, b) => a - b);
   }
 
-  //set timeout(s) for all bids
+  // set timeout(s) for all bids
   bidmanager.setTimeouts(timeouts);
 
   adaptermanager.callBids({ adUnits, adUnitCodes, cbTimeout });
