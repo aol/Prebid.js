@@ -50,7 +50,7 @@ export default Object.assign(adapter({
     this.server = options ? options.server : null;
     this.adUnits = {};
 
-    //first send all events fired before enableAnalytics called
+    // first send all events fired before enableAnalytics called
     events.getEvents().forEach(event => {
       if (!event) {
         return;
@@ -68,7 +68,7 @@ export default Object.assign(adapter({
     };
   },
 
-  //override AnalyticsAdapter functions by supplying custom methods
+  // override AnalyticsAdapter functions by supplying custom methods
   track({ eventType, args }) {
     switch (eventType) {
       case AUCTION_END:
@@ -213,7 +213,6 @@ export default Object.assign(adapter({
     let baseSchema, url;
 
     switch (event) {
-
       case EVENTS.AUCTION:
 
         baseSchema = this.getBaseSchema(EVENTS.AUCTION, adUnit);
@@ -234,7 +233,6 @@ export default Object.assign(adapter({
         let winSchema = this.getWinSchema(adUnit);
         url = baseSchemaTemplate(baseSchema) + winSchemaTemplate(winSchema);
         return url;
-
     }
   },
 
