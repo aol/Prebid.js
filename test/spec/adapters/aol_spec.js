@@ -76,7 +76,7 @@ describe('AolAdapter', () => {
   beforeEach(() => adapter = new AolAdapter());
 
   function createBidderRequest({bids, params} = {}) {
-    var bidderRequest = utils.cloneJson(getDefaultBidRequest());
+    var bidderRequest = getDefaultBidRequest();
     if (bids && Array.isArray(bids)) {
       bidderRequest.bids = bids;
     }
@@ -568,8 +568,8 @@ describe('AolAdapter', () => {
         adapter.callBids(getDefaultBidRequest());
         server.respond();
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
-        expect(addedBidResponse.ad).to.equal("<script>logInfo('ad');</script>");
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        expect(addedBidResponse.ad).to.equal('<script>logInfo(\'ad\');</script>');
         expect(addedBidResponse.cpm).to.equal(0.09);
         expect(addedBidResponse.width).to.equal(728);
         expect(addedBidResponse.height).to.equal(90);
@@ -580,19 +580,19 @@ describe('AolAdapter', () => {
       it('should be added to bidmanager including pixels from pubapi response', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<img src=\"pixel.gif\">');</script>"
+          pixels: '<script>document.write(\'<img src="pixel.gif">\');</script>'
         };
 
         server.respondWith(JSON.stringify(bidResponse));
         adapter.callBids(getDefaultBidRequest());
         server.respond();
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
         expect(addedBidResponse.ad).to.equal(
           '<script>logInfo(\'ad\');</script>' +
           '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
           'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' +
-          'document.write(\'<img src=\"pixel.gif\">\');}</script>'
+          'document.write(\'<img src="pixel.gif">\');}</script>'
         );
       });
 
@@ -604,7 +604,7 @@ describe('AolAdapter', () => {
         adapter.callBids(getDefaultBidRequest());
         server.respond();
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        var addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
         expect(addedBidResponse.dealId).to.equal('12345');
       });
 
@@ -623,7 +623,7 @@ describe('AolAdapter', () => {
       it('should not render pixels on pubapi response when no parameter is set', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<iframe src=\"pixels.org\"></iframe>');</script>"
+          pixels: '<script>document.write(\'<iframe src="pixels.org"></iframe>\');</script>'
         };
         server.respondWith(JSON.stringify(bidResponse));
         adapter.callBids(getDefaultBidRequest());
@@ -635,8 +635,8 @@ describe('AolAdapter', () => {
       it('should render pixels from pubapi response when param userSyncOn is set with \'bidResponse\'', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<iframe src=\"pixels.org\"></iframe>" +
-          "<iframe src=\"pixels1.org\"></iframe>');</script>"
+          pixels: '<script>document.write(\'<iframe src="pixels.org"></iframe>' +
+          '<iframe src="pixels1.org"></iframe>\');</script>'
         };
 
         server.respondWith(JSON.stringify(bidResponse));
@@ -664,8 +664,8 @@ describe('AolAdapter', () => {
         $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
         let bidResponse = getDefaultBidResponse();
         bidResponse.ext = {
-          pixels: "<script>document.write('<iframe src=\"test.com\"></iframe>" +
-          "<iframe src=\"test2.org\"></iframe>');</script>"
+          pixels: '<script>document.write(\'<iframe src="test.com"></iframe>' +
+          '<iframe src="test2.org"></iframe>\');</script>'
         };
         server.respondWith(JSON.stringify(bidResponse));
 
