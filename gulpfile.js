@@ -46,7 +46,7 @@ gulp.task('clean', function () {
     .pipe(clean());
 });
 
-gulp.task('devpack', ['clean'], function () {
+gulp.task('devpack', function () {
   webpackConfig.devtool = 'source-map';
   const analyticsSources = helpers.getAnalyticsSources(analyticsDirectory);
   return gulp.src([].concat(analyticsSources, 'src/prebid.js'))
