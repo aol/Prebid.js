@@ -144,6 +144,17 @@ gulp.task('webpack', ['clean'], function () {
     .pipe(connect.reload());
 });
 
+gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
+  return gulp.src('build/dev/prebid.js')
+    .pipe(uglify({
+      output: {
+        comments: /(ADAPTER BEGIN|ADAPTER END)/
+      }
+    }))
+    .pipe(optimizejs())
+    .pipe(gulp.dest('build/dist'));
+});
+
 // Run the unit tests.
 //
 // By default, this runs in headless chrome.
