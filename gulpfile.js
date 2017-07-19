@@ -114,8 +114,6 @@ gulp.task('devpack', ['clean'], function () {
     .pipe(helpers.nameModules(externalModules))
     .pipe(webpackStream(cloned, webpack))
     .pipe(replace('$prebid.version$', prebid.version))
-    // Remove window=window that was used to go around Uglify bug
-    .pipe(replace(/window\s*=\s*window;/g, ''))
     .pipe(gulp.dest('build/dev'))
     .pipe(connect.reload());
 });
@@ -131,13 +129,6 @@ gulp.task('webpack', ['clean'], function () {
   delete cloned.devtool;
 
   var externalModules = helpers.getArgModules();
-
-  webpackConfig.module.loaders = webpackConfig.module.loaders.concat([{
-    test: /adapters/,
-    include: /(src)/,
-    exclude: /(adapter.js|baseAdapter.js|analytics)/,
-    loader: 'delimiterLoader'
-  }]);
 
   const analyticsSources = helpers.getAnalyticsSources(analyticsDirectory);
   const moduleSources = helpers.getModulePaths(externalModules);
