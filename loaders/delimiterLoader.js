@@ -24,9 +24,9 @@ let parseAdapterInfo = (adapterPath) => {
 let wrapAdapterContent = (adapterInfo, content) => {
   switch (adapterInfo.type) {
     case BID_ADAPTER:
-      return `/*@preserve ADAPTER BEGIN ${adapterInfo.code}*/${content}/*@preserve ADAPTER END ${adapterInfo.code}*/window=window;`;
+      return `/*!ADAPTER BEGIN ${adapterInfo.code}*/${content}/*!ADAPTER END ${adapterInfo.code}*/window=window;`;
     case ANALYTIC_ADAPTER:
-      return `/*@preserve ANALYTIC ADAPTER BEGIN ${adapterInfo.code}*/${content}/*@preserve ANALYTIC ADAPTER END ${adapterInfo.code}*/window=window;`;
+      return `/*!ANALYTIC ADAPTER BEGIN ${adapterInfo.code}*/${content}/*!ANALYTIC ADAPTER END ${adapterInfo.code}*/window=window;`;
     default:
       return content;
   }
