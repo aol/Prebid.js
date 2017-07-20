@@ -148,10 +148,12 @@ gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
   return gulp.src('build/dev/prebid.js')
     .pipe(uglify({
       output: {
-        comments: /(ADAPTER BEGIN|ADAPTER END)/
+        comments: 'some'
       }
     }))
     .pipe(optimizejs())
+    .pipe(replace(/,?(\/\*@preserve ANALYTIC ADAPTER BEGIN \w+\*\/)\s*window\s*=\s*window/g, '$1'))
+    .pipe(replace(/,?(\/\*@preserve ANALYTIC ADAPTER END \w+\*\/)\s*window\s*=\s*window/g, '$1'))
     .pipe(gulp.dest('build/dist'));
 });
 
