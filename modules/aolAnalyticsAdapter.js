@@ -6,11 +6,11 @@
 
 import { ajax } from 'src/ajax';
 import CONSTANTS from 'src/constants.json';
-import adapter from 'AnalyticsAdapter';
-import BIDDERS_IDS_MAP from './aolPartnersIds.json';
-
-const events = require('src/events');
-const utils = require('../../utils');
+import adapter from 'src/AnalyticsAdapter';
+import BIDDERS_IDS_MAP from 'src/adapters/analytics/aolPartnersIds.json';
+import * as utils from 'src/utils';
+import events from 'src/events';
+import adaptermanager from 'src/adaptermanager';
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
 const BID_WON = CONSTANTS.EVENTS.BID_WON;
@@ -37,7 +37,7 @@ let auctionSchemaTemplate = template`;pubadid=${'pubadid'};hbauctionid=${'hbauct
 let winSchemaTemplate = template`;hbauctioneventts=${'hbauctioneventts'};pubadid=${'pubadid'};hbauctionid=${'hbauctionid'};hbwinner=${'hbwinner'};pubcpm=${'pubcpm'}${'hbdealid'};hbbidid=${'hbbidid'}`;
 let bidderSchemaTemplate = template`;hbbidder=${'hbbidder'};hbbid=${'hbbid'};hbstatus=${'hbstatus'};hbtime=${'hbtime'}${'hbdealid'};hbbidid=${'hbbidid'}`;
 
-export default Object.assign(adapter({
+let aolAnalyticsAdapter = Object.assign(adapter({
   url: '',
   analyticsType
 }), {
@@ -340,3 +340,10 @@ function addAolParams(adUnit, adUnitsConf, bidsReceived) {
   });
   return adUnit;
 }
+
+adaptermanager.registerAnalyticsAdapter({
+  adapter: aolAnalyticsAdapter,
+  code: AOL_BIDDERS_CODES.aol
+});
+
+export default aolAnalyticsAdapter;
