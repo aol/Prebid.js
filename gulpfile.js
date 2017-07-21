@@ -146,14 +146,16 @@ gulp.task('webpack', ['clean'], function () {
 
 gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
   return gulp.src('build/dev/prebid.js')
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)/g, '$1window=window;'))
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)/g, '$1window=window;'))
     .pipe(uglify({
       output: {
         comments: /^!/
       }
     }))
     .pipe(optimizejs())
-    .pipe(replace(/,?(\/\*!ANALYTIC ADAPTER BEGIN \w+\*\/)\s*window\s*=\s*window/g, '$1'))
-    .pipe(replace(/,?(\/\*!ANALYTIC ADAPTER END \w+\*\/)\s*window\s*=\s*window/g, '$1'))
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)\s*window=window(;|,)?/g, '$1'))
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, '$1'))
     .pipe(gulp.dest('build/dist'));
 });
 
