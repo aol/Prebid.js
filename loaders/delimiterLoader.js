@@ -4,14 +4,11 @@
  * @author Valentin Zhukovsky <valentin.zhukovsky@oath.com>
  */
 
-let path = require('path');
-
 const BID_ADAPTER = 'BidAdapter';
 const ANALYTIC_ADAPTER = 'AnalyticsAdapter';
 
-let parseAdapterInfo = (adapterPath) => {
-  let fileName = path.parse(adapterPath).name;
-  let matchedItems = fileName.match(/(.+)(BidAdapter|AnalyticsAdapter)/);
+let parseAdapterInfo = (adapterFileName) => {
+  let matchedItems = adapterFileName.match(/(.+)(BidAdapter|AnalyticsAdapter)/);
 
   if (matchedItems) {
     return {
@@ -32,8 +29,8 @@ let wrapAdapterContent = (adapterInfo, content) => {
   }
 };
 
-module.exports = function(content) {
-  let adapterInfo = parseAdapterInfo(this.resourcePath);
+module.exports = function(content, options) {
+  let adapterInfo = parseAdapterInfo(options.file);
 
   if (adapterInfo) {
     return wrapAdapterContent(adapterInfo, content);
