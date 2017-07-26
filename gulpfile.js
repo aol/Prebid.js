@@ -155,7 +155,7 @@ gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
     }))
     .pipe(optimizejs())
     .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)\s*window=window(;|,)?/g, '$1'))
-    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, '$1'))
+    .pipe(replace(/(,)?(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, ';$2'))
     .pipe(gulp.dest('build/dist'));
 });
 
