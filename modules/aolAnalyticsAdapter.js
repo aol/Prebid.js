@@ -7,7 +7,7 @@
 import { ajax } from 'src/ajax';
 import CONSTANTS from 'src/constants.json';
 import adapter from 'src/AnalyticsAdapter';
-import BIDDERS_IDS_MAP from 'src/aolPartnersIds.json';
+import BIDDERS_IDS_MAP from 'modules/aolPartnersIds';
 import * as utils from 'src/utils';
 import events from 'src/events';
 import adaptermanager from 'src/adaptermanager';

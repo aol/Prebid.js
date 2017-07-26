@@ -30,7 +30,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.js/,
+        test: /.js$/,
         include: /modules/,
         exclude: /node_modules/,
         use: [{ loader: 'delimiterLoader' }]
