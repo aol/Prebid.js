@@ -138,7 +138,7 @@ gulp.task('webpack', ['clean'], function () {
     .pipe(webpackStream(cloned, webpack))
     .pipe(replace('$prebid.version$', prebid.version))
     .pipe(uglify())
-    .pipe(gulpif(file => file.basename === 'prebid.js', header(banner, { prebid: prebid })))
+    .pipe(gulpif(file => file.basename === 'prebid-core.js', header(banner, { prebid: prebid })))
     .pipe(optimizejs())
     .pipe(gulp.dest('build/dist'))
     .pipe(connect.reload());
@@ -222,7 +222,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['src/**/*.js', 'test/**/*.js'])
+  return gulp.src(['src/**/*.js', 'modules/**/*.js', 'test/**/*.js'])
     .pipe(eslint())
     .pipe(eslint.format('stylish'))
     .pipe(eslint.failAfterError());
