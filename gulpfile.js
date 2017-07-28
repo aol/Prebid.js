@@ -29,8 +29,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var fs = require('fs');
 
 var prebid = require('./package.json');
-var dateString = 'Updated : ' + (new Date()).toISOString().substring(0, 10);
-var banner = '/* <%= prebid.name %> v<%= prebid.version %>\n' + dateString + ' */\n';
+var banner = '/* <%= prebid.name %> v<%= prebid.version %>*/\n';
 var analyticsDirectory = '../analytics';
 var port = 9999;
 
@@ -156,6 +155,7 @@ gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
     .pipe(optimizejs())
     .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)\s*window=window(;|,)?/g, '$1'))
     .pipe(replace(/(,)?(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, ';$2'))
+    .pipe(header(banner, { prebid: prebid }))
     .pipe(gulp.dest('build/dist'));
 });
 
