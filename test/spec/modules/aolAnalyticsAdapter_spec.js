@@ -1,8 +1,8 @@
 // Copyright 2016 AOL Platforms.
 
-import { expect } from 'chai';
-import events from '../../../../../src/events';
-import CONSTANTS from '../../../../../src/constants.json';
+import {expect} from 'chai';
+import events from 'src/events';
+import CONSTANTS from 'src/constants.json';
 import {
   DEFAULT_REQUEST_TIMESTAMP,
   DEFAULT_REQUEST_ID,
@@ -12,10 +12,9 @@ import {
   BID_CONFIGS,
   BID_SETS,
   BIDS,
-} from '../../../../fixtures/fixturesAnalytics';
-
-const utils = require('../../../../../src/utils');
-const aolAnalytics = require('../../../../../src/adapters/analytics/aol').default;
+} from 'test/fixtures/fixturesAnalytics';
+import * as utils from 'src/utils';
+import aolAnalytics from 'modules/aolAnalyticsAdapter';
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
 const BID_WON = CONSTANTS.EVENTS.BID_WON;
@@ -48,15 +47,15 @@ describe('AOL analytics adapter', () => {
         start: DEFAULT_REQUEST_TIMESTAMP,
         timeout: DEFAULT_TIMEOUT,
         bids: adUnits.map(adUnit => adUnit.bids
-            .filter(bid => bid.bidder === bidderCode)
-            .map(bid => Object.assign({}, bid, {
-              placementCode: adUnit.code,
-              bidId: utils.getUniqueIdentifierStr(),
-              bidderRequestId: bidderRequestId,
-              requestId: DEFAULT_REQUEST_ID,
-              sizes: adUnit.sizes
-            }))
-          )
+          .filter(bid => bid.bidder === bidderCode)
+          .map(bid => Object.assign({}, bid, {
+            placementCode: adUnit.code,
+            bidId: utils.getUniqueIdentifierStr(),
+            bidderRequestId: bidderRequestId,
+            requestId: DEFAULT_REQUEST_ID,
+            sizes: adUnit.sizes
+          }))
+        )
           .reduce(utils.flatten, [])
       };
     });
@@ -138,7 +137,7 @@ describe('AOL analytics adapter', () => {
         });
         let bidsReceived = [validBidReceived];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -156,7 +155,7 @@ describe('AOL analytics adapter', () => {
         });
         let bidsReceived = [emptyBidReceived];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -170,7 +169,7 @@ describe('AOL analytics adapter', () => {
         let bidsRequested = [BID_SETS.AOL];
         let bidsReceived = [];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -200,7 +199,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -220,7 +219,7 @@ describe('AOL analytics adapter', () => {
         let bidsRequested = createRequestedBids(adUnitsConfig);
         let bidsReceived = [];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -263,7 +262,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -302,7 +301,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -325,7 +324,7 @@ describe('AOL analytics adapter', () => {
         let bidsRequested = [BID_SETS.AOL];
         let bidsReceived = [BIDS.VALID];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.adUnits)
           .to.have.property(DEFAULT_AD_UNIT_CODE)
@@ -371,7 +370,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledTwice).to.be.true;
         let call1 = aolAnalytics.reportEvent.getCall(0);
@@ -429,7 +428,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -477,7 +476,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -528,7 +527,7 @@ describe('AOL analytics adapter', () => {
           })
         ];
 
-        aolAnalytics.reportAuctionEvent({ adUnitsConfig, bidsRequested, bidsReceived });
+        aolAnalytics.reportAuctionEvent({adUnitsConfig, bidsRequested, bidsReceived});
 
         expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
         expect(aolAnalytics.reportEvent.calledWith(1)).to.be.true;
@@ -730,7 +729,7 @@ describe('AOL analytics adapter', () => {
         'header-bid-tag-1': winningAdUnit,
         'header-bid-tag-2': {}
       };
-      aolAnalytics.reportWinEvent({ winningBid });
+      aolAnalytics.reportWinEvent({winningBid});
 
       expect(aolAnalytics.reportEvent.calledOnce).to.be.true;
       expect(aolAnalytics.reportEvent.calledWith(ANALYTICS_EVENTS.WIN, winningAdUnit)).to.be.true;
@@ -757,7 +756,7 @@ describe('AOL analytics adapter', () => {
 
     it('should build event URL', () => {
       let event = AUCTION_END;
-      let adUnit = { foo: 'bar' };
+      let adUnit = {foo: 'bar'};
 
       aolAnalytics.reportEvent(event, adUnit);
 
@@ -767,7 +766,7 @@ describe('AOL analytics adapter', () => {
 
     it('make AJAX call', () => {
       let event = AUCTION_END;
-      let adUnit = { foo: 'bar' };
+      let adUnit = {foo: 'bar'};
 
       aolAnalytics.buildEventUrl.returns('http://www.example.com/');
       aolAnalytics.reportEvent(event, adUnit);
@@ -948,7 +947,7 @@ describe('AOL analytics adapter', () => {
       it('should build url with hbcur parameter if set', () => {
         let bid = BIDS.VALID;
         let url = aolAnalytics.buildEventUrl(ANALYTICS_EVENTS.AUCTION, {
-          aolParams: Object.assign({}, BID_CONFIGS.AOL1.params, { currencyCode: 'USD' }),
+          aolParams: Object.assign({}, BID_CONFIGS.AOL1.params, {currencyCode: 'USD'}),
           bids: [bid],
           winner: bid
         });
@@ -968,7 +967,7 @@ describe('AOL analytics adapter', () => {
       it('should build url with pubapi parameter if set', () => {
         let bid = BIDS.VALID;
         let url = aolAnalytics.buildEventUrl(ANALYTICS_EVENTS.AUCTION, {
-          aolParams: Object.assign({}, BID_CONFIGS.AOL1.params, { pubapiId: 456 }),
+          aolParams: Object.assign({}, BID_CONFIGS.AOL1.params, {pubapiId: 456}),
           bids: [bid],
           winner: bid
         });

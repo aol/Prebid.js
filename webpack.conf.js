@@ -16,13 +16,25 @@ module.exports = {
     modules: [
       path.resolve('.'),
       'node_modules'
-    ],
+    ]
+  },
+  resolveLoader: {
+    modules: [
+      path.resolve('./loaders'),
+      path.resolve('./node_modules')
+     ]
   },
   output: {
     jsonpFunction: 'pbjsChunk'
   },
   module: {
     rules: [
+      {
+        test: /.js$/,
+        include: /modules/,
+        exclude: /node_modules/,
+        use: [{ loader: 'delimiterLoader' }]
+      },
       {
         test: /\.js$/,
         exclude: path.resolve('./node_modules'), // required to prevent loader from choking non-Prebid.js node_modules
