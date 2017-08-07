@@ -38,6 +38,7 @@ function newPluginsArray(browserstack) {
     'karma-sinon-ie',
     'karma-sourcemap-loader',
     'karma-spec-reporter',
+    'karma-junit-reporter',
     'karma-webpack',
   ];
   if (browserstack) {
@@ -56,10 +57,13 @@ function setReporters(karmaConf, codeCoverage, browserstack) {
   // In browserstack, the default 'progress' reporter floods the logs.
   // The karma-spec-reporter reports failures more concisely
   if (browserstack) {
-    karmaConf.reporters = ['spec'];
+    karmaConf.reporters = ['spec', 'junit'];
     karmaConf.specReporter = {
       suppressSkipped: false,
       suppressPassed: true
+    };
+    karmaConf.junitReporter = {
+      outputDir: 'test'
     };
   } else {
     karmaConf.reporters = ['progress'];
@@ -83,8 +87,9 @@ function setBrowsers(karmaConf, browserstack) {
   if (browserstack) {
     karmaConf.browserStack = {
       username: process.env.BROWSERSTACK_USERNAME,
-      accessKey: process.env.BROWSERSTACK_KEY
-    }
+      accessKey: process.env.BROWSERSTACK_KEY,
+      project: 'Prebid'
+    };
     karmaConf.customLaunchers = require('./browsers.json')
     karmaConf.browsers = Object.keys(karmaConf.customLaunchers);
   } else {
