@@ -23,6 +23,10 @@ var events = require('src/events');
 var adserver = require('src/adserver');
 var CONSTANTS = require('src/constants.json');
 
+// These bid adapters are required to be loaded for the following tests to work
+require('modules/appnexusAstBidAdapter');
+require('modules/adequantBidAdapter');
+
 var config = require('test/fixtures/config.json');
 
 $$PREBID_GLOBAL$$ = $$PREBID_GLOBAL$$ || {};
@@ -138,6 +142,10 @@ describe('Unit: Prebid Module', function () {
     $$PREBID_GLOBAL$$.adUnits = [];
   })
   describe('getAdserverTargetingForAdUnitCodeStr', function () {
+    beforeEach(() => {
+      resetAuction();
+    });
+
     it('should return targeting info as a string', function () {
       const adUnitCode = config.adUnitCodes[0];
       $$PREBID_GLOBAL$$.enableSendAllBids();
@@ -332,10 +340,9 @@ describe('Unit: Prebid Module', function () {
   });
 
   describe('getBidResponses', function () {
-    var result = $$PREBID_GLOBAL$$.getBidResponses();
-    var compare = getBidResponsesFromAPI();
-
     it('should return expected bid responses when not passed an adunitCode', function () {
+      var result = $$PREBID_GLOBAL$$.getBidResponses();
+      var compare = getBidResponsesFromAPI();
       assert.deepEqual(result, compare, 'expected bid responses are returned');
     });
 
@@ -1327,7 +1334,7 @@ describe('Unit: Prebid Module', function () {
           'increment': 0.01,
         },
         {
-            // missing min prop
+          // missing min prop
           'max': 18,
           'increment': 0.05,
           'cap': true

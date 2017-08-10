@@ -1,14 +1,40 @@
-// Copyright 2016 AOL Platforms.
+// Copyright 2017 AOL Platforms.
 
 /**
- * @author Marian Rusnak <marian.rusnak@teamaol.com>
+ * @author Valentin Zhukovsky <valentin.zhukovsky@oath.com>
  */
 
-module.exports = function(content) {
-  var adapterName = this.resourcePath.slice(this.resourcePath.lastIndexOf('/') + 1, -3);
-  // Intentionally added 'window=window;' after the comment so it is not removed.
-  // It is probably a bug in UglifyJS that the comment is not recognized as comment node.
-  // I will look at it later.
-  // TODO(marian.rusnak): Investigate and fix Uglify comments recognition and removal.
-  return `/*!ADAPTER BEGIN ${adapterName}*/window=window;${content}/*!ADAPTER END ${adapterName}*/window=window;`;
+const BID_ADAPTER = 'BidAdapter';
+const ANALYTIC_ADAPTER = 'AnalyticsAdapter';
+
+let parseAdapterInfo = (adapterFileName) => {
+  let matchedItems = adapterFileName.match(/(.+)(BidAdapter|AnalyticsAdapter)/);
+
+  if (matchedItems) {
+    return {
+      code: matchedItems[1],
+      type: matchedItems[2]
+    };
+  }
+};
+
+let wrapAdapterContent = (adapterInfo, content) => {
+  switch (adapterInfo.type) {
+    case BID_ADAPTER:
+      return `/*!ADAPTER BEGIN ${adapterInfo.code}*/${content}/*!ADAPTER END ${adapterInfo.code}*/`;
+    case ANALYTIC_ADAPTER:
+      return `/*!ANALYTICS ADAPTER BEGIN ${adapterInfo.code}*/${content}/*!ANALYTICS ADAPTER END ${adapterInfo.code}*/`;
+    default:
+      return content;
+  }
+};
+
+module.exports = function(content, options) {
+  let adapterInfo = parseAdapterInfo(options.file);
+
+  if (adapterInfo) {
+    return wrapAdapterContent(adapterInfo, content);
+  }
+
+  return content;
 };
