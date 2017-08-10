@@ -6,6 +6,12 @@ const constants = require('src/constants.json');
 const adaptermanager = require('src/adaptermanager');
 const BaseAdapter = require('src/adapter');
 
+const AOL_BIDDERS_CODES = {
+  aol: 'aol',
+  onemobile: 'onemobile',
+  onedisplay: 'onedisplay'
+};
+
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
 };
@@ -24,11 +30,6 @@ const AolAdapter = function AolAdapter() {
   const SYNC_TYPES = {
     iframe: 'IFRAME',
     img: 'IMG'
-  };
-  const AOL_BIDDERS_CODES = {
-    aol: 'aol',
-    onemobile: 'onemobile',
-    onedisplay: 'onedisplay'
   };
 
   let domReady = (() => {
@@ -345,6 +346,8 @@ const AolAdapter = function AolAdapter() {
   });
 };
 
-adaptermanager.registerBidAdapter(new AolAdapter(), 'aol');
+adaptermanager.registerBidAdapter(new AolAdapter(), AOL_BIDDERS_CODES.aol);
+adaptermanager.aliasBidAdapter(AOL_BIDDERS_CODES.aol, AOL_BIDDERS_CODES.onedisplay);
+adaptermanager.aliasBidAdapter(AOL_BIDDERS_CODES.aol, AOL_BIDDERS_CODES.onemobile);
 
 module.exports = AolAdapter;
