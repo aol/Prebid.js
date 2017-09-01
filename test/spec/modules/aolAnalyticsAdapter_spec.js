@@ -1394,7 +1394,7 @@ describe('AOL analytics adapter', () => {
       expect(aolAnalytics.generateAdId(adUnit)).to.equal(adUnit.code);
     });
 
-    it('should return adId when adId adIdExtension is present', () => {
+    it('should return adId with extension when adIdExtension is present', () => {
       adUnit.adIdExtension = 'test-adId-postfix';
       formatAdIdWithExtensionStub.returns('formatted-ad-id');
 
