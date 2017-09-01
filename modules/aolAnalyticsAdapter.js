@@ -240,12 +240,18 @@ let aolAnalyticsAdapter = Object.assign(adapter({
     let adId;
 
     if (adUnit.adIdExtension) {
-      adId = adUnit.code + '-' + adUnit.adIdExtension;
+      adId = this.formatAdIdWithExtension(adUnit);
     } else {
       adId = adUnit.code;
     }
 
     return encodeURIComponent(adId);
+  },
+
+  formatAdIdWithExtension(adUnit) {
+    let adId = `${adUnit.code}-${adUnit.adIdExtension}`;
+
+    return adId.replace(/[^\da-zA-Z|:\.\-_&\$]/g, '');
   }
 });
 
