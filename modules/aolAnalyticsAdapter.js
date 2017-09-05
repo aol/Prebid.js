@@ -251,7 +251,7 @@ let aolAnalyticsAdapter = Object.assign(adapter({
   formatAdIdWithExtension(adUnit) {
     let adId = `${adUnit.code}-${adUnit.adIdExtension}`;
 
-    return adId.replace(/[^\da-zA-Z|:\.\-_&\$]/g, '');
+    return adId.replace(/[^\da-z|%:\.\-_&\$]/gi, '');
   }
 });
 

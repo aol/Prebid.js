@@ -1423,11 +1423,10 @@ describe('AOL analytics adapter', () => {
       expect(aolAnalytics.formatAdIdWithExtension(adUnit)).to.equal(`${adUnit.code}-${adUnit.adIdExtension}`);
     });
 
-
     it('should return formatted adId without illegal symbols', () => {
-      adUnit.adIdExtension = '!@#%\'*()+!!!123legalSYMBOls|:.-_&$56789EnD!@#%\'*()+!!!';
+      adUnit.adIdExtension = '!@#\'*()+!!!123legalSYMBOls|%:.-_&$56789EnD!@#\'*()+!!!';
 
-      expect(aolAnalytics.formatAdIdWithExtension(adUnit)).to.equal(`${adUnit.code}-123legalSYMBOls|:.-_&$56789EnD`);
+      expect(aolAnalytics.formatAdIdWithExtension(adUnit)).to.equal(`${adUnit.code}-123legalSYMBOls|%:.-_&$56789EnD`);
     });
   });
 });
