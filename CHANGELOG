@@ -1,6 +1,7 @@
 AOL Prebid 1.26.0
 ----------------
 Added restrictions for adIdExtension field.
+Added partners ids for s2s support.
 
 
 AOL Prebid 1.25.0
