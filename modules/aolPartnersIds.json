@@ -81,5 +81,11 @@
   "eplanning": 80,
   "spotx": 81,
   "ucfunnel": 82,
-  "kargo": 83
+  "kargo": 83,
+  "appnexusS2S": 84,
+  "indexExchangeS2S": 85,
+  "onedisplayS2S": 86,
+  "pubmaticS2S": 87,
+  "medianetS2S": 88,
+  "geminiS2S": 89
 }

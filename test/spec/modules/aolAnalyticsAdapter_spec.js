@@ -1356,10 +1356,18 @@ describe('AOL analytics adapter', () => {
 
   describe('generateAdId()', () => {
     let adUnit;
+    let formatAdIdWithExtensionStub;
+
     beforeEach(() => {
       adUnit = {
         code: 'ad-unit-code'
       };
+
+      formatAdIdWithExtensionStub = sinon.stub(aolAnalytics, 'formatAdIdWithExtension');
+    });
+
+    afterEach(() => {
+      formatAdIdWithExtensionStub.restore();
     });
 
     it('should return adunit code when aolParams field is undefined', () => {
@@ -1388,15 +1396,37 @@ describe('AOL analytics adapter', () => {
 
     it('should return adId with extension when adIdExtension is present', () => {
       adUnit.adIdExtension = 'test-adId-postfix';
+      formatAdIdWithExtensionStub.returns('formatted-ad-id');
 
-      expect(aolAnalytics.generateAdId(adUnit)).to.equal(adUnit.code + '-test-adId-postfix');
+      expect(aolAnalytics.generateAdId(adUnit)).to.equal('formatted-ad-id');
+      expect(formatAdIdWithExtensionStub.withArgs(adUnit).calledOnce).to.be.true;
     });
 
-    it('should return encoded adId with extension when code or adIdExtension contains special characters', () => {
-      adUnit.code = 'ad@code+';
-      adUnit.adIdExtension = '$test&@adI#d/post=fix+encoding';
+    it('should always return encoded adId value', () => {
+      adUnit.code = 'ad@code+$test&@adI#d/=value+encoding';
 
-      expect(aolAnalytics.generateAdId(adUnit)).to.equal(encodeURIComponent(adUnit.code + '-' + adUnit.adIdExtension));
+      expect(aolAnalytics.generateAdId(adUnit)).to.equal(encodeURIComponent(adUnit.code));
+    });
+  });
+
+  describe('formatAdIdWithExtension()', () => {
+    let adUnit;
+
+    beforeEach(() => {
+      adUnit = {
+        code: 'ad-unit-code',
+        adIdExtension: 'test-adId-postfix'
+      };
+    });
+
+    it('should return formatted adId', () => {
+      expect(aolAnalytics.formatAdIdWithExtension(adUnit)).to.equal(`${adUnit.code}-${adUnit.adIdExtension}`);
+    });
+
+    it('should return formatted adId without illegal symbols', () => {
+      adUnit.adIdExtension = '!@#\'*()+!!!123legalSYMBOls|%:.-_&$56789EnD!@#\'*()+!!!';
+
+      expect(aolAnalytics.formatAdIdWithExtension(adUnit)).to.equal(`${adUnit.code}-123legalSYMBOls|%:.-_&$56789EnD`);
     });
   });
 });
