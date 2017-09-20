@@ -2,7 +2,6 @@ import Adapter from 'src/adapter';
 import bidfactory from 'src/bidfactory';
 import bidmanager from 'src/bidmanager';
 import * as utils from 'src/utils';
-import { ajax } from 'src/ajax';
 import { STATUS } from 'src/constants';
 import adaptermanager from 'src/adaptermanager';
 import adloader from 'src/adloader';
