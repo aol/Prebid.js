@@ -165,13 +165,6 @@ exports.addBidResponse = function (adUnitCode, bid) {
 
     bid.timeToRespond = bid.responseTimestamp - bid.requestTimestamp;
 
-    if (_currentTimeoutIndex >= _timeouts.length &&
-      $$PREBID_GLOBAL$$.cbTimeout + $$PREBID_GLOBAL$$.timeoutBuffer) {
-      const timedOut = true;
-
-      exports.executeCallback(timedOut);
-    }
-
     // Let listeners know that now is the time to adjust the bid, if they want to.
     //
     // CAREFUL: Publishers rely on certain bid properties to be available (like cpm),

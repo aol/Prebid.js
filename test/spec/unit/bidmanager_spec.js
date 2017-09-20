@@ -227,12 +227,12 @@ describe('The Bid Manager', () => {
           store: new Error('Unable to save to the cache'),
         });
 
-        // describe('when the auction still has time left', () => {
-        //   prepAuction([adUnit], (bidRequest) => bidRequest.start = auctionStart(false));
-		//
-        //   it("shouldn't add the bid to the auction, and shouldn't execute the end-of-auction callbacks",
-        //     testAddVideoBid(false, false, stubProvider, false));
-        // });
+        describe('when the auction still has time left', () => {
+          prepAuction([adUnit], (bidRequest) => bidRequest.start = auctionStart(false));
+
+          it("shouldn't add the bid to the auction, and shouldn't execute the end-of-auction callbacks",
+            testAddVideoBid(false, false, stubProvider, false));
+        });
 
         describe('when the auction has timed out', () => {
           prepAuction([adUnit], (bidRequest) => bidRequest.start = auctionStart(true));
