@@ -1,20 +1,18 @@
-import Adapter from 'src/adapter';
+import BaseAdapter from 'src/adapter';
 import bidfactory from 'src/bidfactory';
 import bidmanager from 'src/bidmanager';
 import * as utils from 'src/utils';
-import { ajax } from 'src/ajax';
 import { STATUS } from 'src/constants';
 import adaptermanager from 'src/adaptermanager';
 import adloader from 'src/adloader';
 
+const KOMOONA_BIDDER_NAME = 'komoona';
+
 function KomoonaAdapter() {
-  const KOMOONA_BIDDER_NAME = 'komoona';
   const pbjsObject = window.$$PREBID_GLOBAL$$;
 
-  let baseAdapter = Adapter.createNew('komoona');
-
   /* Prebid executes this function when the page asks to send out bid requests */
-  baseAdapter.callBids = function(params) {
+  function _callBids(params) {
     var kbConf = {
       ts_as: new Date().getTime(),
       hb_placements: [],
@@ -65,17 +63,11 @@ function KomoonaAdapter() {
     bidmanager.addBidResponse(placementCode, bidResponse);
   }
 
-  return {
-    createNew: KomoonaAdapter.createNew,
-    callBids: baseAdapter.callBids,
-    setBidderCode: baseAdapter.setBidderCode,
-  };
+  return Object.assign(this, new BaseAdapter(KOMOONA_BIDDER_NAME), {
+    callBids: _callBids
+  });
 }
 
-KomoonaAdapter.createNew = function() {
-  return new KomoonaAdapter();
-};
-
-adaptermanager.registerBidAdapter(new KomoonaAdapter(), 'komoona');
+adaptermanager.registerBidAdapter(new KomoonaAdapter(), KOMOONA_BIDDER_NAME);
 
 module.exports = KomoonaAdapter;
