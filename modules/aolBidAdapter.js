@@ -201,7 +201,7 @@ function _buildOneMobileGetUrl(bid) {
   return nexageApi;
 }
 
- function _parseBid(response, bid) {
+function _parseBid(response, bid) {
   let bidData;
 
   try {
@@ -225,15 +225,15 @@ function _buildOneMobileGetUrl(bid) {
 
   let ad = bidData.adm;
   if (response.ext && response.ext.pixels) {
-    // if (bid.params.userSyncOn === constants.EVENTS.BID_RESPONSE) {
-    //   dropSyncCookies(response.ext.pixels);
-    // } else {
-    //   let formattedPixels = response.ext.pixels.replace(/<\/?script( type=('|")text\/javascript('|")|)?>/g, '');
-    //
-    //   ad += '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
-    //     'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' + formattedPixels +
-    //     '}</script>';
-    // }
+    if (bid.userSyncOn === constants.EVENTS.BID_RESPONSE) {
+      dropSyncCookies(response.ext.pixels);
+    } else {
+      let formattedPixels = response.ext.pixels.replace(/<\/?script( type=('|")text\/javascript('|")|)?>/g, '');
+
+      ad += '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
+        'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' + formattedPixels +
+        '}</script>';
+    }
   }
 
   return {
@@ -315,6 +315,7 @@ function formatBidRequest(endpointCode, bid) {
 
   bidRequest.bidderCode = bid.bidder;
   bidRequest.bidId = bid.bidId;
+  bidRequest.userSyncOn = bid.params.userSyncOn;
 
   return bidRequest;
 }
@@ -349,7 +350,9 @@ export const aolAdapter = {
     });
   },
   interpretResponse: interpretResponse,
-  getUserSyncs: function(syncOptions) {}
+  getUserSyncs: function(syncOptions) {
+    console.log(syncOptions);
+  }
 };
 
 registerBidder(aolAdapter);
