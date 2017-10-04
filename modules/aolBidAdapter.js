@@ -201,21 +201,12 @@ function _buildOneMobileGetUrl(bid) {
   return nexageApi;
 }
 
-function _addErrorBidResponse(bid, response = {}) {
-  const bidResponse = bidfactory.createBid(2, bid);
-  bidResponse.bidderCode = bid.bidder;
-  bidResponse.reason = response.nbr;
-  bidResponse.raw = response;
-  bidmanager.addBidResponse(bid.placementCode, bidResponse);
-}
-
-function _addBidResponse(bid, response) {
+ function _parseBid(response, bid) {
   let bidData;
 
   try {
     bidData = response.seatbid[0].bid[0];
   } catch (e) {
-    _addErrorBidResponse(bid, response);
     return;
   }
 
@@ -228,38 +219,35 @@ function _addBidResponse(bid, response) {
 
     if (cpm === null || isNaN(cpm)) {
       utils.logError('Invalid price in bid response', AOL_BIDDERS_CODES.aol, bid);
-      _addErrorBidResponse(bid, response);
       return;
     }
   }
 
   let ad = bidData.adm;
   if (response.ext && response.ext.pixels) {
-    if (bid.params.userSyncOn === constants.EVENTS.BID_RESPONSE) {
-      dropSyncCookies(response.ext.pixels);
-    } else {
-      let formattedPixels = response.ext.pixels.replace(/<\/?script( type=('|")text\/javascript('|")|)?>/g, '');
-
-      ad += '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
-        'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' + formattedPixels +
-        '}</script>';
-    }
+    // if (bid.params.userSyncOn === constants.EVENTS.BID_RESPONSE) {
+    //   dropSyncCookies(response.ext.pixels);
+    // } else {
+    //   let formattedPixels = response.ext.pixels.replace(/<\/?script( type=('|")text\/javascript('|")|)?>/g, '');
+    //
+    //   ad += '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
+    //     'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' + formattedPixels +
+    //     '}</script>';
+    // }
   }
 
-  const bidResponse = bidfactory.createBid(1, bid);
-  bidResponse.bidderCode = bid.bidder;
-  bidResponse.ad = ad;
-  bidResponse.cpm = cpm;
-  bidResponse.width = bidData.w;
-  bidResponse.height = bidData.h;
-  bidResponse.creativeId = bidData.crid;
-  bidResponse.pubapiId = response.id;
-  bidResponse.currencyCode = response.cur;
-  if (bidData.dealid) {
-    bidResponse.dealId = bidData.dealid;
-  }
-
-  bidmanager.addBidResponse(bid.placementCode, bidResponse);
+  return {
+    bidderCode: bid.bidderCode,
+    requestId: bid.bidId,
+    ad: ad,
+    cpm: cpm,
+    width: bidData.w,
+    height: bidData.height,
+    creativeId: bidData.creativeId,
+    pubapiId: response.id,
+    currencyCode: response.cur,
+    dealId: bidData.dealid
+  };
 }
 
 function _isMarketplaceBidder(bidder) {
@@ -287,7 +275,7 @@ function isMarketplaceBid(bid) {
   return _isMarketplaceBidder(bid.bidder) && bid.params.placement && bid.params.network;
 }
 
-function resolveEndpoint(bid) {
+function resolveEndpointCode(bid) {
   if (_isNexageRequestGet(bid)) {
     return AOL_ENDPOINTS.MOBILE.GET;
   } else if (_isNexageRequestPost(bid)) {
@@ -298,26 +286,53 @@ function resolveEndpoint(bid) {
 }
 
 function formatBidRequest(endpointCode, bid) {
+  let bidRequest;
+
   switch (endpointCode) {
     case AOL_ENDPOINTS.DISPLAY.GET:
-      return {
+      bidRequest = {
         url: _buildMarketplaceUrl(bid),
         method: 'GET'
       };
+      break;
 
     case AOL_ENDPOINTS.MOBILE.GET:
-      return {
+      bidRequest = {
         url: _buildOneMobileGetUrl(bid),
         method: 'GET'
       };
+      break;
 
     case AOL_ENDPOINTS.MOBILE.POST:
-      return {
+      bidRequest = {
         url: _buildOneMobileBaseUrl(bid),
         method: 'POST',
-        data: bid.params
+        data: bid.params,
+        contentType: 'application/json'
       };
+      break;
   }
+
+  bidRequest.bidderCode = bid.bidder;
+  bidRequest.bidId = bid.bidId;
+
+  return bidRequest;
+}
+
+function interpretResponse(bidResponse, bidRequest) {
+  let bids = [];
+
+  if (!bidResponse) {
+    utils.logError('Empty bid response', bidRequest.bidderCode, bidResponse);
+  } else {
+    let bid = _parseBid(bidResponse, bidRequest);
+
+    if (bid) {
+      bids.push(bid);
+    }
+  }
+
+  return bids;
 }
 
 export const aolAdapter = {
@@ -328,12 +343,12 @@ export const aolAdapter = {
   },
   buildRequests: function (bids) {
     return bids.map(bid => {
-      const endpointCode = resolveEndpoint(bid);
+      const endpointCode = resolveEndpointCode(bid);
 
       return formatBidRequest(endpointCode, bid)
     });
   },
-  interpretResponse: function(serverResponse, request) {},
+  interpretResponse: interpretResponse,
   getUserSyncs: function(syncOptions) {}
 };
 

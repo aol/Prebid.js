@@ -236,7 +236,7 @@ export function newBidder(spec) {
               typeof request.data === 'string' ? request.data : JSON.stringify(request.data),
               {
                 method: 'POST',
-                contentType: 'text/plain',
+                contentType: request.contentType || 'text/plain',
                 withCredentials: true
               }
             );
