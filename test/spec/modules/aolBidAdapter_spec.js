@@ -2,6 +2,8 @@ import {expect} from 'chai';
 import * as utils from 'src/utils';
 import AolAdapter from 'modules/aolBidAdapter';
 import bidmanager from 'src/bidmanager';
+import { spec } from 'modules/aolBidAdapter';
+import { newBidder } from 'src/adapters/bidderFactory';
 
 let getDefaultBidResponse = () => {
   return {
@@ -73,7 +75,7 @@ describe('AolAdapter', () => {
 
   let adapter;
 
-  beforeEach(() => adapter = new AolAdapter());
+  beforeEach(() => adapter = newBidder(spec));
 
   function createBidderRequest({bids, params} = {}) {
     var bidderRequest = getDefaultBidRequest();

@@ -336,7 +336,7 @@ function interpretResponse(bidResponse, bidRequest) {
   return bids;
 }
 
-export const aolAdapter = {
+export const spec = {
   code: AOL_BIDDERS_CODES.aol,
   aliases: [AOL_BIDDERS_CODES.onemobile, AOL_BIDDERS_CODES.onedisplay],
   isBidRequestValid: function() {
@@ -355,4 +355,4 @@ export const aolAdapter = {
   }
 };
 
-registerBidder(aolAdapter);
+registerBidder(spec);
