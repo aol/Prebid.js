@@ -36,7 +36,21 @@ $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
 };
 
-let showCpmAdjustmentWarning = true;
+let showCpmAdjustmentWarning = (function () {
+  let showWarning = true;
+
+  return function () {
+    let bidderSettings = $$PREBID_GLOBAL$$.bidderSettings;
+    if (showWarning && bidderSettings  && bidderSettings.aol &&
+      typeof bidderSettings.aol.bidCpmAdjustment === 'function') {
+      utils.logWarn(
+        'bidCpmAdjustment is active for the AOL adapter. ' +
+        'As of Prebid 0.14, AOL can bid in net – please contact your accounts team to enable.'
+      );
+    }
+    showWarning = false; // warning is shown at most once
+  };
+})();
 
 function template(strings, ...keys) {
   return function(...values) {
@@ -275,6 +289,10 @@ function isMarketplaceBid(bid) {
   return _isMarketplaceBidder(bid.bidder) && bid.params.placement && bid.params.network;
 }
 
+function isMobileBid(bid) {
+  return _isNexageRequestGet(bid) || _isNexageRequestPost(bid);
+}
+
 function resolveEndpointCode(bid) {
   if (_isNexageRequestGet(bid)) {
     return AOL_ENDPOINTS.MOBILE.GET;
@@ -323,6 +341,8 @@ function formatBidRequest(endpointCode, bid) {
 function interpretResponse(bidResponse, bidRequest) {
   let bids = [];
 
+  showCpmAdjustmentWarning();
+
   if (!bidResponse) {
     utils.logError('Empty bid response', bidRequest.bidderCode, bidResponse);
   } else {
@@ -339,8 +359,8 @@ function interpretResponse(bidResponse, bidRequest) {
 export const spec = {
   code: AOL_BIDDERS_CODES.aol,
   aliases: [AOL_BIDDERS_CODES.onemobile, AOL_BIDDERS_CODES.onedisplay],
-  isBidRequestValid: function() {
-    return true;
+  isBidRequestValid: function(bid) {
+    return isMarketplaceBid(bid) || isMobileBid(bid);
   },
   buildRequests: function (bids) {
     return bids.map(bid => {
