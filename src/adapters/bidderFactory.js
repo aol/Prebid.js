@@ -237,6 +237,7 @@ export function newBidder(spec) {
               {
                 method: 'POST',
                 contentType: request.contentType || 'text/plain',
+                customHeaders: request.customHeaders || {},
                 withCredentials: true
               }
             );

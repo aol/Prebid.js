@@ -37,18 +37,18 @@ $$PREBID_GLOBAL$$.aolGlobals = {
 };
 
 let showCpmAdjustmentWarning = (function () {
-  let showWarning = true;
+  let showCpmWarning = true;
 
   return function () {
     let bidderSettings = $$PREBID_GLOBAL$$.bidderSettings;
-    if (showWarning && bidderSettings  && bidderSettings.aol &&
+    if (showCpmWarning && bidderSettings && bidderSettings.aol &&
       typeof bidderSettings.aol.bidCpmAdjustment === 'function') {
       utils.logWarn(
         'bidCpmAdjustment is active for the AOL adapter. ' +
         'As of Prebid 0.14, AOL can bid in net – please contact your accounts team to enable.'
       );
+      showCpmWarning = false; // warning is shown at most once
     }
-    showWarning = false; // warning is shown at most once
   };
 })();
 
@@ -326,7 +326,10 @@ function formatBidRequest(endpointCode, bid) {
         url: _buildOneMobileBaseUrl(bid),
         method: 'POST',
         data: bid.params,
-        contentType: 'application/json'
+        contentType: 'application/json',
+        customHeaders: {
+          'x-openrtb-version': '2.2'
+        }
       };
       break;
   }
