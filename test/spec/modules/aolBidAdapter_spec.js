@@ -549,24 +549,23 @@ describe('AolAdapter', () => {
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
         expect(bidmanager.addBidResponse.firstCall.args[1].getStatusCode()).to.equal(2);
       });
+      
+      it('should be added to bidmanager with attributes from pubapi response', () => {
+        let bidResponse = getDefaultBidResponse();
+        bidResponse.seatbid[0].bid[0].crid = '12345';
 
-      // TODO: should be fixed after adding support for new Prebid userSync feature.
-      // it('should be added to bidmanager with attributes from pubapi response', () => {
-      //   let bidResponse = getDefaultBidResponse();
-      //   bidResponse.seatbid[0].bid[0].crid = '12345';
-      //
-      //   server.respondWith(JSON.stringify(bidResponse));
-      //   adapter.callBids(getDefaultBidRequest());
-      //   server.respond();
-      //   expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-      //   let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
-      //   expect(addedBidResponse.ad).to.equal('<script>logInfo(\'ad\');</script>');
-      //   expect(addedBidResponse.cpm).to.equal(0.09);
-      //   expect(addedBidResponse.width).to.equal(728);
-      //   expect(addedBidResponse.height).to.equal(90);
-      //   expect(addedBidResponse.creativeId).to.equal('12345');
-      //   expect(addedBidResponse.pubapiId).to.equal('245730051428950632');
-      // });
+        server.respondWith(JSON.stringify(bidResponse));
+        adapter.callBids(getDefaultBidRequest());
+        server.respond();
+        expect(bidmanager.addBidResponse.calledOnce).to.be.true;
+        let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
+        expect(addedBidResponse.ad).to.equal('<script>logInfo(\'ad\');</script>');
+        expect(addedBidResponse.cpm).to.equal(0.09);
+        expect(addedBidResponse.width).to.equal(728);
+        expect(addedBidResponse.height).to.equal(90);
+        expect(addedBidResponse.creativeId).to.equal('12345');
+        expect(addedBidResponse.pubapiId).to.equal('245730051428950632');
+      });
 
       it('should be added to bidmanager including pixels from pubapi response', () => {
         let bidResponse = getDefaultBidResponse();
@@ -610,73 +609,6 @@ describe('AolAdapter', () => {
         let addedBidResponse = bidmanager.addBidResponse.firstCall.args[1];
         expect(addedBidResponse.cpm).to.equal('a9334987');
       });
-
-      it('should not render pixels on pubapi response when no parameter is set', () => {
-        let bidResponse = getDefaultBidResponse();
-        bidResponse.ext = {
-          pixels: '<script>document.write(\'<iframe src="pixels.org"></iframe>\');</script>'
-        };
-        server.respondWith(JSON.stringify(bidResponse));
-        adapter.callBids(getDefaultBidRequest());
-        server.respond();
-        expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-        expect(document.body.querySelectorAll('iframe[src="pixels.org"]').length).to.equal(0);
-      });
-
-      // TODO: should be fixed after adding support for new Prebid userSync feature.
-      // it('should render pixels from pubapi response when param userSyncOn is set with \'bidResponse\'', () => {
-      //   let bidResponse = getDefaultBidResponse();
-      //   bidResponse.ext = {
-      //     pixels: '<script>document.write(\'<iframe src="pixels.org"></iframe>' +
-      //     '<iframe src="pixels1.org"></iframe>\');</script>'
-      //   };
-      //
-      //   server.respondWith(JSON.stringify(bidResponse));
-      //   let bidRequest = getDefaultBidRequest();
-      //   bidRequest.bids[0].params.userSyncOn = 'bidResponse';
-      //   adapter.callBids(bidRequest);
-      //   server.respond();
-      //
-      //   expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-      //
-      //   let assertPixelsItem = (pixelsItemSelector) => {
-      //     let pixelsItem = document.body.querySelectorAll(pixelsItemSelector)[0];
-      //
-      //     expect(pixelsItem.width).to.equal('1');
-      //     expect(pixelsItem.height).to.equal('1');
-      //     expect(pixelsItem.style.display).to.equal('none');
-      //   };
-      //
-      //   assertPixelsItem('iframe[src="pixels.org"]');
-      //   assertPixelsItem('iframe[src="pixels1.org"]');
-      //   expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
-      // });
-
-      it('should not render pixels if it was rendered before', () => {
-        $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
-        let bidResponse = getDefaultBidResponse();
-        bidResponse.ext = {
-          pixels: '<script>document.write(\'<iframe src="test.com"></iframe>' +
-          '<iframe src="test2.org"></iframe>\');</script>'
-        };
-        server.respondWith(JSON.stringify(bidResponse));
-
-        let bidRequest = getDefaultBidRequest();
-        bidRequest.bids[0].params.userSyncOn = 'bidResponse';
-        adapter.callBids(bidRequest);
-        server.respond();
-
-        expect(bidmanager.addBidResponse.calledOnce).to.be.true;
-
-        let assertPixelsItem = (pixelsItemSelector) => {
-          let pixelsItems = document.body.querySelectorAll(pixelsItemSelector);
-
-          expect(pixelsItems.length).to.equal(0);
-        };
-
-        assertPixelsItem('iframe[src="test.com"]');
-        assertPixelsItem('iframe[src="test2.com"]');
-      });
     });
 
     describe('when bidCpmAdjustment is set', () => {
@@ -708,6 +640,38 @@ describe('AolAdapter', () => {
         server.respond();
         expect(utils.logWarn.calledOnce).to.be.true;
       });
+    });
+  });
+
+  describe('getUserSyncs', () => {
+    it('should return user syncs when param userSyncOn is set with \'bidResponse\'', () => {
+      let bidResponse = getDefaultBidResponse();
+      bidResponse.ext = {
+        pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
+        '<iframe src="pixels1.org"></iframe>\');</script>'
+      };
+
+      let userSyncs = spec.getUserSyncs({}, bidResponse);
+
+      expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
+      expect(userSyncs).to.deep.equal([
+        {type: 'img', url: 'img.org'},
+        {type: 'iframe', url: 'pixels1.org'}
+      ]);
+    });
+
+    it('should not return user syncs pixels if it was returned before', () => {
+      $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
+      let bidResponse = getDefaultBidResponse();
+      bidResponse.ext = {
+        pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
+        '<iframe src="pixels1.org"></iframe>\');</script>'
+      };
+
+      let userSyncs = spec.getUserSyncs({}, bidResponse);
+
+      expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
+      expect(userSyncs).to.deep.equal([]);
     });
   });
 });

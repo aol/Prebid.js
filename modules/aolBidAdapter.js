@@ -27,10 +27,6 @@ const MP_SERVER_MAP = {
   as: 'adserver-as.adtech.advertising.com'
 };
 const NEXAGE_SERVER = 'hb.nexage.com';
-const SYNC_TYPES = {
-  iframe: 'IFRAME',
-  img: 'IMG'
-};
 
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
@@ -64,34 +60,6 @@ function template(strings, ...keys) {
   };
 }
 
-let domReady = (() => {
-  let readyEventFired = false;
-  return fn => {
-    let idempotentFn = () => {
-      if (readyEventFired) {
-        return;
-      }
-      readyEventFired = true;
-      return fn();
-    };
-
-    if (document.readyState === 'complete') {
-      return idempotentFn();
-    }
-
-    document.addEventListener('DOMContentLoaded', idempotentFn, false);
-    window.addEventListener('load', idempotentFn, false);
-  };
-})();
-
-function dropSyncCookies(pixels) {
-  if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped) {
-    let pixelElements = parsePixelItems(pixels);
-    renderPixelElements(pixelElements);
-    $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
-  }
-}
-
 function parsePixelItems(pixels) {
   let itemsRegExp = /(img|iframe)[\s\S]*?src\s*=\s*("|')(.*?)\2/gi;
   let tagNameRegExp = /\w*(?=\s)/;
@@ -106,8 +74,8 @@ function parsePixelItems(pixels) {
         let sourcesPathMatches = item.match(srcRegExp);
         if (tagNameMatches && sourcesPathMatches) {
           pixelsItems.push({
-            tagName: tagNameMatches[0].toUpperCase(),
-            src: sourcesPathMatches[2]
+            type: tagNameMatches[0],
+            url: sourcesPathMatches[2]
           });
         }
       });
@@ -115,38 +83,6 @@ function parsePixelItems(pixels) {
   }
 
   return pixelsItems;
-}
-
-function renderPixelElements(pixelsElements) {
-  pixelsElements.forEach((element) => {
-    switch (element.tagName) {
-      case SYNC_TYPES.img:
-        return renderPixelImage(element);
-      case SYNC_TYPES.iframe:
-        return renderPixelIframe(element);
-    }
-  });
-}
-
-function renderPixelImage(pixelsItem) {
-  let image = new Image();
-  image.src = pixelsItem.src;
-}
-
-function renderPixelIframe(pixelsItem) {
-  let iframe = document.createElement('iframe');
-  iframe.width = 1;
-  iframe.height = 1;
-  iframe.style.display = 'none';
-  iframe.src = pixelsItem.src;
-  if (document.readyState === 'interactive' ||
-    document.readyState === 'complete') {
-    document.body.appendChild(iframe);
-  } else {
-    domReady(() => {
-      document.body.appendChild(iframe);
-    });
-  }
 }
 
 function _buildMarketplaceUrl(bid) {
@@ -239,9 +175,7 @@ function _parseBid(response, bid) {
 
   let ad = bidData.adm;
   if (response.ext && response.ext.pixels) {
-    if (bid.userSyncOn === constants.EVENTS.BID_RESPONSE) {
-      dropSyncCookies(response.ext.pixels);
-    } else {
+    if (bid.userSyncOn !== constants.EVENTS.BID_RESPONSE) {
       let formattedPixels = response.ext.pixels.replace(/<\/?script( type=('|")text\/javascript('|")|)?>/g, '');
 
       ad += '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
@@ -256,8 +190,8 @@ function _parseBid(response, bid) {
     ad: ad,
     cpm: cpm,
     width: bidData.w,
-    height: bidData.height,
-    creativeId: bidData.creativeId,
+    height: bidData.h,
+    creativeId: bidData.crid,
     pubapiId: response.id,
     currencyCode: response.cur,
     dealId: bidData.dealid
@@ -342,8 +276,6 @@ function formatBidRequest(endpointCode, bid) {
 }
 
 function interpretResponse(bidResponse, bidRequest) {
-  let bids = [];
-
   showCpmAdjustmentWarning();
 
   if (!bidResponse) {
@@ -352,11 +284,9 @@ function interpretResponse(bidResponse, bidRequest) {
     let bid = _parseBid(bidResponse, bidRequest);
 
     if (bid) {
-      bids.push(bid);
+      return bid;
     }
   }
-
-  return bids;
 }
 
 export const spec = {
@@ -373,8 +303,14 @@ export const spec = {
     });
   },
   interpretResponse: interpretResponse,
-  getUserSyncs: function(syncOptions) {
-    console.log(syncOptions);
+  getUserSyncs: function(syncOptions, bidResponse) {
+    if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse && bidResponse.ext) {
+      $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
+
+      return parsePixelItems(bidResponse.ext.pixels);
+    }
+
+    return [];
   }
 };
 
