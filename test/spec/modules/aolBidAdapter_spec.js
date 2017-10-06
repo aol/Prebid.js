@@ -2,8 +2,8 @@ import {expect} from 'chai';
 import * as utils from 'src/utils';
 import AolAdapter from 'modules/aolBidAdapter';
 import bidmanager from 'src/bidmanager';
-import { spec } from 'modules/aolBidAdapter';
-import { newBidder } from 'src/adapters/bidderFactory';
+import {spec} from 'modules/aolBidAdapter';
+import {newBidder} from 'src/adapters/bidderFactory';
 
 let getDefaultBidResponse = () => {
   return {
@@ -549,7 +549,7 @@ describe('AolAdapter', () => {
         expect(bidmanager.addBidResponse.calledOnce).to.be.true;
         expect(bidmanager.addBidResponse.firstCall.args[1].getStatusCode()).to.equal(2);
       });
-      
+
       it('should be added to bidmanager with attributes from pubapi response', () => {
         let bidResponse = getDefaultBidResponse();
         bidResponse.seatbid[0].bid[0].crid = '12345';
@@ -644,7 +644,7 @@ describe('AolAdapter', () => {
   });
 
   describe('getUserSyncs', () => {
-    it('should return user syncs when param userSyncOn is set with \'bidResponse\'', () => {
+    it('should return user syncs', () => {
       let bidResponse = getDefaultBidResponse();
       bidResponse.ext = {
         pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
@@ -660,7 +660,7 @@ describe('AolAdapter', () => {
       ]);
     });
 
-    it('should not return user syncs pixels if it was returned before', () => {
+    it('should not return user syncs once again if it has already returned', () => {
       $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
       let bidResponse = getDefaultBidResponse();
       bidResponse.ext = {
