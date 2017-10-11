@@ -3,9 +3,9 @@ import { registerBidder } from 'src/adapters/bidderFactory';
 import constants from 'src/constants.json'
 
 const AOL_BIDDERS_CODES = {
-  aol: 'aol',
-  onemobile: 'onemobile',
-  onedisplay: 'onedisplay'
+  AOL: 'aol',
+  ONEMOBILE: 'onemobile',
+  ONEDISPLAY: 'onedisplay'
 };
 
 const AOL_ENDPOINTS = {
@@ -15,6 +15,17 @@ const AOL_ENDPOINTS = {
   MOBILE: {
     GET: 'mobile-get',
     POST: 'mobile-post'
+  }
+};
+
+const SYNC_TYPES = {
+  IFRAME: {
+    TAG: 'iframe',
+    TYPE: 'iframe'
+  },
+  IMAGE: {
+    TAG: 'img',
+    TYPE: 'image'
   }
 };
 
@@ -70,12 +81,13 @@ function parsePixelItems(pixels) {
     let matchedItems = pixels.match(itemsRegExp);
     if (matchedItems) {
       matchedItems.forEach(item => {
-        let tagNameMatches = item.match(tagNameRegExp);
-        let sourcesPathMatches = item.match(srcRegExp);
-        if (tagNameMatches && sourcesPathMatches) {
+        let tagName = item.match(tagNameRegExp)[0];
+        let url = item.match(srcRegExp)[2];
+
+        if (tagName && tagName) {
           pixelsItems.push({
-            type: tagNameMatches[0],
-            url: sourcesPathMatches[2]
+            type: tagName === SYNC_TYPES.IMAGE.TAG ? SYNC_TYPES.IMAGE.TYPE : SYNC_TYPES.IFRAME.TYPE,
+            url: url
           });
         }
       });
@@ -168,7 +180,7 @@ function _parseBid(response, bid) {
     cpm = bidData.price;
 
     if (cpm === null || isNaN(cpm)) {
-      utils.logError('Invalid price in bid response', AOL_BIDDERS_CODES.aol, bid);
+      utils.logError('Invalid price in bid response', AOL_BIDDERS_CODES.AOL, bid);
       return;
     }
   }
@@ -199,11 +211,11 @@ function _parseBid(response, bid) {
 }
 
 function _isMarketplaceBidder(bidder) {
-  return bidder === AOL_BIDDERS_CODES.aol || bidder === AOL_BIDDERS_CODES.onedisplay;
+  return bidder === AOL_BIDDERS_CODES.AOL || bidder === AOL_BIDDERS_CODES.ONEDISPLAY;
 }
 
 function _isNexageBidder(bidder) {
-  return bidder === AOL_BIDDERS_CODES.aol || bidder === AOL_BIDDERS_CODES.onemobile;
+  return bidder === AOL_BIDDERS_CODES.AOL || bidder === AOL_BIDDERS_CODES.ONEMOBILE;
 }
 
 function _isNexageRequestPost(bid) {
@@ -290,8 +302,8 @@ function interpretResponse(bidResponse, bidRequest) {
 }
 
 export const spec = {
-  code: AOL_BIDDERS_CODES.aol,
-  aliases: [AOL_BIDDERS_CODES.onemobile, AOL_BIDDERS_CODES.onedisplay],
+  code: AOL_BIDDERS_CODES.AOL,
+  aliases: [AOL_BIDDERS_CODES.ONEMOBILE, AOL_BIDDERS_CODES.ONEDISPLAY],
   isBidRequestValid: function(bid) {
     return isMarketplaceBid(bid) || isMobileBid(bid);
   },
@@ -303,9 +315,11 @@ export const spec = {
     });
   },
   interpretResponse: interpretResponse,
-  getUserSyncs: function(options, bidResponse, bidRequest) {
-    if (bidRequest && bidRequest.userSyncOn === constants.EVENTS.BID_RESPONSE) {
-      if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse && bidResponse.ext) {
+  getUserSyncs: function(options, bidResponses, bidRequest) {
+    let bidResponse = bidResponses[0];
+
+    if (bidResponse && bidRequest && bidRequest.userSyncOn === constants.EVENTS.BID_RESPONSE) {
+      if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse.ext && bidResponse.ext.pixels) {
         $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
 
         return parsePixelItems(bidResponse.ext.pixels);

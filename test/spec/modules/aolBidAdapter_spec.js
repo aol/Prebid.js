@@ -69,6 +69,11 @@ let getDefaultBidRequest = () => {
   };
 };
 
+let getPixels = () => {
+  return '<script>document.write(\'<img src="img.org"></iframe>' +
+    '<iframe src="pixels1.org"></iframe>\');</script>';
+};
+
 describe('AolAdapter', () => {
   const MARKETPLACE_URL = 'adserver-us.adtech.advertising.com/pubapi/3.0/';
   const NEXAGE_URL = 'hb.nexage.com/bidRequest?';
@@ -644,39 +649,45 @@ describe('AolAdapter', () => {
   });
 
   describe('getUserSyncs', () => {
-    it('should return user syncs only if userSyncOn equals to "bidResponse"', () => {
-      let bidResponse = getDefaultBidResponse();
-      let bidRequest = {
+    let bidResponse;
+    let bidRequest;
+
+    beforeEach(() => {
+      bidResponse = getDefaultBidResponse();
+      bidResponse.ext = {
+        pixels: getPixels()
+      };
+      bidRequest = {
         userSyncOn: 'bidResponse'
       };
-      bidResponse.ext = {
-        pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
-        '<iframe src="pixels1.org"></iframe>\');</script>'
-      };
+      $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = false;
+    });
 
-      let userSyncs = spec.getUserSyncs({}, bidResponse, bidRequest);
+    it('should return user syncs only if userSyncOn equals to "bidResponse"', () => {
+      let userSyncs = spec.getUserSyncs({}, [bidResponse], bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
       expect(userSyncs).to.deep.equal([
-        {type: 'img', url: 'img.org'},
+        {type: 'image', url: 'img.org'},
         {type: 'iframe', url: 'pixels1.org'}
       ]);
     });
 
     it('should not return user syncs if it has already been returned', () => {
       $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
-      let bidResponse = getDefaultBidResponse();
-      let bidRequest = {
-        userSyncOn: 'bidResponse'
-      };
-      bidResponse.ext = {
-        pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
-        '<iframe src="pixels1.org"></iframe>\');</script>'
-      };
 
-      let userSyncs = spec.getUserSyncs({}, bidResponse, bidRequest);
+      let userSyncs = spec.getUserSyncs({}, [bidResponse], bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
+      expect(userSyncs).to.deep.equal([]);
+    });
+
+    it('should not return user syncs if pixels are not present', () => {
+      bidResponse.ext.pixels = null;
+
+      let userSyncs = spec.getUserSyncs({}, [bidResponse], bidRequest);
+
+      expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.false;
       expect(userSyncs).to.deep.equal([]);
     });
   });
