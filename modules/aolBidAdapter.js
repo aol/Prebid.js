@@ -303,11 +303,13 @@ export const spec = {
     });
   },
   interpretResponse: interpretResponse,
-  getUserSyncs: function(syncOptions, bidResponse) {
-    if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse && bidResponse.ext) {
-      $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
+  getUserSyncs: function({userSyncOn}, bidResponse) {
+    if (userSyncOn === constants.EVENTS.BID_RESPONSE) {
+      if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse && bidResponse.ext) {
+        $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
 
-      return parsePixelItems(bidResponse.ext.pixels);
+        return parsePixelItems(bidResponse.ext.pixels);
+      }
     }
 
     return [];

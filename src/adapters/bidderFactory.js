@@ -167,12 +167,13 @@ export function newBidder(spec) {
       // After all the responses have come back, fill up the "no bid" bids and
       // register any required usersync pixels.
       const responses = [];
-      function afterAllResponses() {
+      function afterAllResponses(request) {
         fillNoBids();
         if (spec.getUserSyncs) {
           let syncs = spec.getUserSyncs({
             iframeEnabled: config.getConfig('userSync.iframeEnabled'),
             pixelEnabled: config.getConfig('userSync.pixelEnabled'),
+            userSyncOn: request.userSyncOn
           }, responses);
           if (syncs) {
             if (!Array.isArray(syncs)) {
@@ -272,7 +273,7 @@ export function newBidder(spec) {
               addBidUsingRequestMap(bids);
             }
           }
-          onResponse();
+          onResponse(request);
 
           function addBidUsingRequestMap(bid) {
             const bidRequest = bidRequestMap[bid.requestId];
