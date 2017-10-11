@@ -303,8 +303,8 @@ export const spec = {
     });
   },
   interpretResponse: interpretResponse,
-  getUserSyncs: function({userSyncOn}, bidResponse) {
-    if (userSyncOn === constants.EVENTS.BID_RESPONSE) {
+  getUserSyncs: function(options, bidResponse, bidRequest) {
+    if (bidRequest && bidRequest.userSyncOn === constants.EVENTS.BID_RESPONSE) {
       if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse && bidResponse.ext) {
         $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
 

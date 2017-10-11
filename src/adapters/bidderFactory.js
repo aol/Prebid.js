@@ -173,8 +173,7 @@ export function newBidder(spec) {
           let syncs = spec.getUserSyncs({
             iframeEnabled: config.getConfig('userSync.iframeEnabled'),
             pixelEnabled: config.getConfig('userSync.pixelEnabled'),
-            userSyncOn: request.userSyncOn
-          }, responses);
+          }, responses, request);
           if (syncs) {
             if (!Array.isArray(syncs)) {
               syncs = [syncs];

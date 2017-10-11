@@ -644,14 +644,17 @@ describe('AolAdapter', () => {
   });
 
   describe('getUserSyncs', () => {
-    it('should return user syncs', () => {
+    it('should return user syncs only if userSyncOn equals to "bidResponse"', () => {
       let bidResponse = getDefaultBidResponse();
+      let bidRequest = {
+        userSyncOn: 'bidResponse'
+      };
       bidResponse.ext = {
         pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
         '<iframe src="pixels1.org"></iframe>\');</script>'
       };
 
-      let userSyncs = spec.getUserSyncs({}, bidResponse);
+      let userSyncs = spec.getUserSyncs({}, bidResponse, bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
       expect(userSyncs).to.deep.equal([
@@ -660,15 +663,18 @@ describe('AolAdapter', () => {
       ]);
     });
 
-    it('should not return user syncs once again if it has already returned', () => {
+    it('should not return user syncs if it has already been returned', () => {
       $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
       let bidResponse = getDefaultBidResponse();
+      let bidRequest = {
+        userSyncOn: 'bidResponse'
+      };
       bidResponse.ext = {
         pixels: '<script>document.write(\'<img src="img.org"></iframe>' +
         '<iframe src="pixels1.org"></iframe>\');</script>'
       };
 
-      let userSyncs = spec.getUserSyncs({}, bidResponse);
+      let userSyncs = spec.getUserSyncs({}, bidResponse, bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
       expect(userSyncs).to.deep.equal([]);
