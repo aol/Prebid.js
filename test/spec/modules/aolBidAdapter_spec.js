@@ -428,7 +428,7 @@ describe('AolAdapter', () => {
         });
 
         it('should not hit the nexage api endpoint with post data with the openrtb config' +
-            ' if a required parameter is missing', () => {
+          ' if a required parameter is missing', () => {
           let bidConfig = getNexagePostBidParams();
 
           bidConfig.imp[0].id = null;
