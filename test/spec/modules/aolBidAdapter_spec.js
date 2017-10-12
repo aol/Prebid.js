@@ -443,8 +443,7 @@ describe('AolAdapter', () => {
             params: bidConfig
           }));
           expect(requests).to.be.empty;
-        })
-        ;
+        });
       });
     });
 

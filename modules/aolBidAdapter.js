@@ -71,6 +71,10 @@ function template(strings, ...keys) {
   };
 }
 
+function isSecureProtocol() {
+  return document.location.protocol === 'https:';
+}
+
 function parsePixelItems(pixels) {
   let itemsRegExp = /(img|iframe)[\s\S]*?src\s*=\s*("|')(.*?)\2/gi;
   let tagNameRegExp = /\w*(?=\s)/;
@@ -155,6 +159,10 @@ function _buildOneMobileGetUrl(bid) {
   let nexageApi = _buildOneMobileBaseUrl(bid);
   if (dcn && pos) {
     let ext = '';
+    if (isSecureProtocol()) {
+      bid.params.ext = bid.params.ext || {};
+      bid.params.ext.secure = 1;
+    }
     utils._each(bid.params.ext, (value, key) => {
       ext += `&${key}=${encodeURIComponent(value)}`;
     });
