@@ -212,7 +212,7 @@ export function newBidder(spec) {
 
       function formatGetParameters(data) {
         if (data) {
-          return `?${typeof data === 'object' ? parseQueryStringParameters(data) :data}`;
+          return `?${typeof data === 'object' ? parseQueryStringParameters(data) : data}`;
         }
 
         return '';
