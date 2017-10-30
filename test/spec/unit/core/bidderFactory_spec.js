@@ -194,7 +194,8 @@ describe('bidders created by newBidder', () => {
       expect(ajaxStub.firstCall.args[3]).to.deep.equal({
         method: 'POST',
         contentType: 'application/json',
-        withCredentials: true
+        withCredentials: true,
+        customHeaders: {}
       });
     });
 
