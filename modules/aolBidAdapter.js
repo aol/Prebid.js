@@ -1,6 +1,6 @@
 import * as utils from 'src/utils';
 import { registerBidder } from 'src/adapters/bidderFactory';
-import constants from 'src/constants.json'
+import constants from 'src/constants.json';
 
 const AOL_BIDDERS_CODES = {
   AOL: 'aol',
