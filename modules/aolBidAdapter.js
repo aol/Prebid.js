@@ -39,6 +39,7 @@ const MP_SERVER_MAP = {
   as: 'adserver-as.adtech.advertising.com'
 };
 const NEXAGE_SERVER = 'hb.nexage.com';
+const BID_RESPONSE_TTL = 300;
 
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
@@ -172,7 +173,7 @@ function _buildOneMobileGetUrl(bid) {
   return nexageApi;
 }
 
-function _parseBid(response, bid) {
+function _parseBidResponse(response, bidRequest) {
   let bidData;
 
   try {
@@ -206,16 +207,18 @@ function _parseBid(response, bid) {
   }
 
   return {
-    bidderCode: bid.bidderCode,
-    requestId: bid.bidId,
+    bidderCode: bidRequest.bidderCode,
+    requestId: bidRequest.bidId,
     ad: ad,
     cpm: cpm,
     width: bidData.w,
     height: bidData.h,
     creativeId: bidData.crid,
     pubapiId: response.id,
-    currencyCode: response.cur,
-    dealId: bidData.dealid
+    currency: response.cur,
+    dealId: bidData.dealid,
+    netRevenue: true,
+    ttl: BID_RESPONSE_TTL
   };
 }
 
@@ -298,13 +301,13 @@ function formatBidRequest(endpointCode, bid) {
   return bidRequest;
 }
 
-function interpretResponse(bidResponse, bidRequest) {
+function interpretResponse({body}, bidRequest) {
   showCpmAdjustmentWarning();
 
-  if (!bidResponse) {
-    utils.logError('Empty bid response', bidRequest.bidderCode, bidResponse);
+  if (!body) {
+    utils.logError('Empty bid response', bidRequest.bidderCode, body);
   } else {
-    let bid = _parseBid(bidResponse, bidRequest);
+    let bid = _parseBidResponse(body, bidRequest);
 
     if (bid) {
       return bid;

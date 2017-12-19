@@ -25,7 +25,7 @@ module.exports = {
      ]
   },
   output: {
-    jsonpFunction: 'pbjsChunk'
+    jsonpFunction: prebid.globalVarName+"Chunk"
   },
   module: {
     rules: [
