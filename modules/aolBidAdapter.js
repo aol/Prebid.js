@@ -39,6 +39,7 @@ const MP_SERVER_MAP = {
   as: 'adserver-as.adtech.advertising.com'
 };
 const NEXAGE_SERVER = 'hb.nexage.com';
+const BID_RESPONSE_TTL = 300;
 
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
@@ -60,12 +61,18 @@ let showCpmAdjustmentWarning = (function () {
   };
 })();
 
+function isInteger(value) {
+  return typeof value === 'number' &&
+    isFinite(value) &&
+    Math.floor(value) === value;
+}
+
 function template(strings, ...keys) {
   return function(...values) {
     let dict = values[values.length - 1] || {};
     let result = [strings[0]];
     keys.forEach(function(key, i) {
-      let value = Number.isInteger(key) ? values[key] : dict[key];
+      let value = isInteger(key) ? values[key] : dict[key];
       result.push(value, strings[i + 1]);
     });
     return result.join('');
@@ -172,7 +179,7 @@ function _buildOneMobileGetUrl(bid) {
   return nexageApi;
 }
 
-function _parseBid(response, bid) {
+function _parseBidResponse(response, bidRequest) {
   let bidData;
 
   try {
@@ -206,16 +213,18 @@ function _parseBid(response, bid) {
   }
 
   return {
-    bidderCode: bid.bidderCode,
-    requestId: bid.bidId,
+    bidderCode: bidRequest.bidderCode,
+    requestId: bidRequest.bidId,
     ad: ad,
     cpm: cpm,
     width: bidData.w,
     height: bidData.h,
     creativeId: bidData.crid,
     pubapiId: response.id,
-    currencyCode: response.cur,
-    dealId: bidData.dealid
+    currency: response.cur,
+    dealId: bidData.dealid,
+    netRevenue: true,
+    ttl: BID_RESPONSE_TTL
   };
 }
 
@@ -298,13 +307,13 @@ function formatBidRequest(endpointCode, bid) {
   return bidRequest;
 }
 
-function interpretResponse(bidResponse, bidRequest) {
+function interpretResponse({body}, bidRequest) {
   showCpmAdjustmentWarning();
 
-  if (!bidResponse) {
-    utils.logError('Empty bid response', bidRequest.bidderCode, bidResponse);
+  if (!body) {
+    utils.logError('Empty bid response', bidRequest.bidderCode, body);
   } else {
-    let bid = _parseBid(bidResponse, bidRequest);
+    let bid = _parseBidResponse(body, bidRequest);
 
     if (bid) {
       return bid;
