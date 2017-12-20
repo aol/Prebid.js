@@ -77,7 +77,7 @@ import { logWarn, logError, parseQueryStringParameters, delayExecution } from 's
  *
  * @property {*} body The response body. If this is legal JSON, then it will be parsed. Otherwise it'll be a
  *   string with the body's content.
- * @property {{get: function(string): string} headers The response headers.
+ * @property {get: function(string): string} headers The response headers.
  *   Call this like `ServerResponse.headers.get("Content-Type")`
  */
 
