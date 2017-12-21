@@ -134,7 +134,9 @@ describe('bidders created by newBidder', () => {
         method: 'POST',
         url: url,
         data: data,
-        contentType: 'text/plain'
+        options: {
+          contentType: 'text/plain'
+        }
       });
 
       bidder.callBids(MOCK_BIDS_REQUEST);
