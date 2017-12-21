@@ -290,8 +290,8 @@ function formatBidRequest(endpointCode, bid) {
         url: _buildOneMobileBaseUrl(bid),
         method: 'POST',
         data: bid.params,
+        contentType: 'application/json',
         options: {
-          contentType: 'application/json',
           customHeaders: {
             'x-openrtb-version': '2.2'
           }

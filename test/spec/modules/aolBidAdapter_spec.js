@@ -455,8 +455,8 @@ describe('AolAdapter', () => {
         expect(request.url).to.contain(NEXAGE_URL);
         expect(request.method).to.equal('POST');
         expect(request.data).to.deep.equal(bidConfig);
+        expect(request.contentType).to.equal('application/json');
         expect(request.options).to.deep.equal({
-          contentType: 'application/json',
           customHeaders: {
             'x-openrtb-version': '2.2'
           }
