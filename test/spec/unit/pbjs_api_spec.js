@@ -48,7 +48,6 @@ auction.getAuctionStatus = function() { return auctionModule.AUCTION_COMPLETED }
 
 function resetAuction() {
   $$PREBID_GLOBAL$$.setConfig({ enableSendAllBids: false });
-  $$PREBID_GLOBAL$$.bidderSettings = {};
   auction.getBidRequests = getBidRequests;
   auction.getBidsReceived = getBidResponses;
   auction.getAdUnits = getAdUnits;
@@ -869,60 +868,9 @@ describe('Unit: Prebid Module', function () {
         clock.restore();
       });
 
-    it('should execute callback after bidder timeout greater than global timeout', () => {
-      var spyBidsBackHandler = sinon.spy();
-      var clock = sinon.useFakeTimers();
-      var requestObj = {
-        bidsBackHandler: spyBidsBackHandler,
-        timeout: 2000
-      };
-
-      $$PREBID_GLOBAL$$.bidderSettings = {
-        aol: {
-          timeout: 3000
-        }
-      };
-      $$PREBID_GLOBAL$$.requestBids(requestObj);
-
-      clock.tick(2000 - 1);
-      assert.ok(spyBidsBackHandler.notCalled, 'bidmanager.executeCallback not called');
-
-      clock.tick(1000);
-      assert.ok(spyBidsBackHandler.notCalled, 'bidmanager.executeCallback not called');
-
-      clock.tick(1);
-      assert.ok(spyBidsBackHandler.called, 'called bidmanager.executeCallback');
-
-      clock.restore();
-      resetAuction();
-    });
-
-    it('should execute callback after global timeout if bidder timeout is smaller', () => {
-      var spyBidsBackHandler = sinon.spy();
-      var clock = sinon.useFakeTimers();
-      var requestObj = {
-        bidsBackHandler: spyBidsBackHandler,
-        timeout: 2000
-      };
-
-      $$PREBID_GLOBAL$$.bidderSettings = {
-        aol: {
-          timeout: 1000
-        }
-      };
-      $$PREBID_GLOBAL$$.requestBids(requestObj);
-
-      clock.tick(2000 - 1);
-      assert.ok(spyBidsBackHandler.notCalled, 'bidmanager.executeCallback not called');
-
-      clock.tick(1);
-      assert.ok(spyBidsBackHandler.called, 'called bidmanager.executeCallback');
-
-      clock.restore();
-      resetAuction();
-    });it('should execute callback immediately if adUnits is empty', () => {
-      var bidsBackHandler = function bidsBackHandlerCallback() {};
-        varspyExecuteCallback = sinon.spy(bidsBackHandler);
+      it('should execute callback immediately if adUnits is empty', () => {
+        var bidsBackHandler = function bidsBackHandlerCallback() {};
+        var spyExecuteCallback = sinon.spy(bidsBackHandler);
 
         $$PREBID_GLOBAL$$.adUnits = [];
         $$PREBID_GLOBAL$$.requestBids({
