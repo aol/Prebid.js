@@ -64,7 +64,7 @@ export const BID_SETS = {
     start: DEFAULT_REQUEST_TIMESTAMP,
     timeout: DEFAULT_TIMEOUT,
     bids: [Object.assign({}, BID_CONFIGS.AOL1, {
-      placementCode: DEFAULT_AD_UNIT_CODE,
+      adUnitCode: DEFAULT_AD_UNIT_CODE,
       bidId: '1144e2f0de84364',
       bidderRequestId: '107f5e6e98dcf10',
       requestId: DEFAULT_REQUEST_ID,
