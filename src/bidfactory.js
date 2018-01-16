@@ -1,3 +1,4 @@
+import { STATUS } from 'src/constants.json';
 var utils = require('./utils.js');
 
 /**
@@ -45,6 +46,10 @@ function Bid(statusCode, bidRequest) {
   // returns the size of the bid creative. Concatenation of width and height by ‘x’.
   this.getSize = function () {
     return this.width + 'x' + this.height;
+  };
+
+  this.isEmptyBid = function () {
+    return _statusCode === STATUS.NO_BID;
   };
 }
 

@@ -285,7 +285,7 @@ export function newBidder(spec) {
           function addBidUsingRequestMap(bid) {
             const bidRequest = bidRequestMap[bid.requestId];
             if (bidRequest) {
-              const prebidBid = Object.assign(bidfactory.createBid(STATUS.GOOD, bidRequest), bid);
+              const prebidBid = Object.assign(bidfactory.createBid(bid.status || STATUS.GOOD, bidRequest), bid);
               addBidWithCode(bidRequest.adUnitCode, prebidBid);
             } else {
               logWarn(`Bidder ${spec.code} made bid for unknown request ID: ${bid.requestId}. Ignoring.`);
@@ -372,6 +372,10 @@ export function isValid(adUnitCode, bid, bidRequests) {
   if (!adUnitCode) {
     logWarn('No adUnitCode was supplied to addBidResponse.');
     return false;
+  }
+
+  if (bid.isEmptyBid()) {
+    return true;
   }
 
   if (!bid) {
