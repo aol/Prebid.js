@@ -156,6 +156,20 @@ describe('AolAdapter', () => {
       spec.interpretResponse(bidResponse, bidRequest);
       expect(utils.logWarn.calledOnce).to.be.true;
     });
+
+    it('should return formatted response object when no bids are present in the response', () => {
+      bidResponse.body.seatbid = [];
+
+      let formattedBidResponse = spec.interpretResponse(bidResponse, bidRequest);
+
+      expect(formattedBidResponse).to.deep.equal({
+        bidderCode: bidRequest.bidderCode,
+        requestId: bidRequest.bidId,
+        status: 2,
+        cpm: 0,
+        ttl: bidRequest.ttl
+      });
+    });
   });
 
   describe('buildRequests()', () => {
