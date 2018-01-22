@@ -293,9 +293,12 @@ export const spec = {
   _formatPixels: function (pixels) {
     let formattedPixels = pixels.replace(/<\/?script( type=('|")text\/javascript('|")|)?>/g, '');
 
-    return '<script>if(!parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped){' +
-      'parent.$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped=true;' + formattedPixels +
-      '}</script>';
+    return '<script>var w=window,prebid;' +
+      'for(var i=0;i<10;i++){w = w.parent;prebid=w.$$PREBID_GLOBAL$$;' +
+      'if(prebid && prebid.aolGlobals && !prebid.aolGlobals.pixelsDropped){' +
+      'try{prebid.aolGlobals.pixelsDropped=true;' + formattedPixels + 'break;}' +
+      'catch(e){continue;}' +
+      '}}</script>';
   },
   _parseBidResponse: function (response, bidRequest) {
     let bidData;
