@@ -1,3 +1,8 @@
+AOL Prebid 1.36.0
+----------------
+Fixed issue with dropping pixels in nested iframes.
+
+
 AOL Prebid 1.35.0
 ----------------
 Fixed failing AOL analytics adapter when passing "adUnits" into "requestBids".
