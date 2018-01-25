@@ -535,7 +535,7 @@ describe('AolAdapter', () => {
   });
 
   describe('_formatPixels()', () => {
-    it('should return formatted pixels', () => {
+    it('should return pixels wrapped with a flag that allow to drop them only once', () => {
       let pixels = '<script>document.write(\'<pixels-dom-elements/>\');</script>';
       let formattedPixels = spec._formatPixels(pixels);
 
