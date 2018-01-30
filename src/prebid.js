@@ -285,7 +285,12 @@ $$PREBID_GLOBAL$$.removeAdUnit = function (adUnitCode) {
 $$PREBID_GLOBAL$$.requestBids = function ({ bidsBackHandler, timeout, adUnits, adUnitCodes, labels } = {}) {
   events.emit('requestBids');
   const cbTimeout = timeout || config.getConfig('bidderTimeout');
-  adUnits = adUnits || $$PREBID_GLOBAL$$.adUnits;
+
+  if (!utils.isEmpty(adUnits)) {
+    $$PREBID_GLOBAL$$.addAdUnits(adUnits);
+  } else {
+    adUnits = $$PREBID_GLOBAL$$.adUnits;
+  }
 
   utils.logInfo('Invoking $$PREBID_GLOBAL$$.requestBids', arguments);
 
