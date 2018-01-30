@@ -374,13 +374,13 @@ export function isValid(adUnitCode, bid, bidRequests) {
     return false;
   }
 
-  if (bid.isEmptyBid()) {
-    return true;
-  }
-
   if (!bid) {
     logWarn(`Some adapter tried to add an undefined bid for ${adUnitCode}.`);
     return false;
+  }
+
+  if (bid.isEmptyBid()) {
+    return true;
   }
 
   if (!hasValidKeys()) {
