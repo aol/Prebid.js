@@ -1,7 +1,7 @@
 import * as utils from 'src/utils';
 import { registerBidder } from 'src/adapters/bidderFactory';
 import { config } from 'src/config';
-import constants from 'src/constants.json';
+import { EVENTS, STATUS } from 'src/constants.json';
 
 const AOL_BIDDERS_CODES = {
   AOL: 'aol',
@@ -41,6 +41,7 @@ const MP_SERVER_MAP = {
 const NEXAGE_SERVER = 'hb.nexage.com';
 const ONE_DISPLAY_TTL = 60;
 const ONE_MOBILE_TTL = 3600;
+const EMPTY_BID_CPM = 0;
 
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
@@ -306,7 +307,13 @@ export const spec = {
     try {
       bidData = response.seatbid[0].bid[0];
     } catch (e) {
-      return;
+      return {
+        bidderCode: bidRequest.bidderCode,
+        requestId: bidRequest.bidId,
+        status: STATUS.NO_BID,
+        cpm: EMPTY_BID_CPM,
+        ttl: bidRequest.ttl
+      };
     }
 
     let cpm;
@@ -324,7 +331,7 @@ export const spec = {
 
     let ad = bidData.adm;
     if (response.ext && response.ext.pixels) {
-      if (config.getConfig('aol.userSyncOn') !== constants.EVENTS.BID_RESPONSE) {
+      if (config.getConfig('aol.userSyncOn') !== EVENTS.BID_RESPONSE) {
         ad += this._formatPixels(response.ext.pixels);
       }
     }
@@ -347,7 +354,7 @@ export const spec = {
   getUserSyncs: function(options, bidResponses) {
     let bidResponse = bidResponses[0];
 
-    if (config.getConfig('aol.userSyncOn') === constants.EVENTS.BID_RESPONSE) {
+    if (config.getConfig('aol.userSyncOn') === EVENTS.BID_RESPONSE) {
       if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse.ext && bidResponse.ext.pixels) {
         $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
 

@@ -11,6 +11,7 @@ import BIDDERS_IDS_MAP from 'modules/aolPartnersIds';
 import * as utils from 'src/utils';
 import events from 'src/events';
 import adaptermanager from 'src/adaptermanager';
+import { auctionManager } from 'src/auctionManager';
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
 const BID_WON = CONSTANTS.EVENTS.BID_WON;
@@ -74,8 +75,8 @@ let aolAnalyticsAdapter = Object.assign(adapter({
       case AUCTION_END:
         this.reportAuctionEvent({
           adUnitsConfig: $$PREBID_GLOBAL$$.adUnits,
-          bidsReceived: $$PREBID_GLOBAL$$._bidsReceived,
-          bidsRequested: $$PREBID_GLOBAL$$._bidsRequested
+          bidsReceived: auctionManager.getBidsReceived(),
+          bidsRequested: auctionManager.getBidsRequested()
         });
         break;
 
@@ -100,13 +101,13 @@ let aolAnalyticsAdapter = Object.assign(adapter({
       .map(bidderRequest => bidderRequest.bids
         .map(bid => {
           let receivedBidsForBidder = bidsReceivedPerBidderPerAdUnit[bid.bidder] || {};
-          let receivedBidsForBidderForAdUnit = receivedBidsForBidder[bid.placementCode] || [];
+          let receivedBidsForBidderForAdUnit = receivedBidsForBidder[bid.adUnitCode] || [];
           // check received bids, or mark bid as timed out if no more received bids
           if (receivedBidsForBidderForAdUnit.length > 0) {
             return receivedBidsForBidderForAdUnit.shift(); // remove to count timed out bids
           } else {
             return {
-              adUnitCode: bid.placementCode,
+              adUnitCode: bid.adUnitCode,
               bidder: bid.bidder,
               cpm: 0,
               getStatusCode: () => 3, // ERROR_TIMEOUT

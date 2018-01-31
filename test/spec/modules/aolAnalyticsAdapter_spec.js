@@ -49,7 +49,7 @@ describe('AOL analytics adapter', () => {
         bids: adUnits.map(adUnit => adUnit.bids
           .filter(bid => bid.bidder === bidderCode)
           .map(bid => Object.assign({}, bid, {
-            placementCode: adUnit.code,
+            adUnitCode: adUnit.code,
             bidId: utils.getUniqueIdentifierStr(),
             bidderRequestId: bidderRequestId,
             requestId: DEFAULT_REQUEST_ID,
