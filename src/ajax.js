@@ -86,22 +86,25 @@ export function ajaxBuilder(timeout = 3000) {
       // IE needs timoeut to be set after open - see #1410
       x.timeout = timeout;
 
-    if (!useXDomainRequest) {
-      if (options.withCredentials) {
-        x.withCredentials = true;
+      if (!useXDomainRequest) {
+        if (options.withCredentials) {
+          x.withCredentials = true;
+        }
+        utils._each(options.customHeaders, (value, header) => {
+          x.setRequestHeader(header, value);
+        });
+        if (options.preflight) {
+          x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        }
+        x.setRequestHeader('Content-Type', options.contentType || 'text/plain');
       }
-      utils._each(options.customHeaders, (value, header) => {
-        x.setRequestHeader(header, value);
-      });
-      if (options.preflight) {
-        x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      if (method === 'POST' && data) {
+        x.send(data);
+      } else {
+        x.send();
       }
-      utils._each(options.customHeaders, (value, header) => {
-        x.setRequestHeader(header, value);
-      });x.setRequestHeader('Content-Type', options.contentType || 'text/plain');
+    } catch (error) {
+      utils.logError('xhr construction', error);
     }
-    x.send(method === 'POST' && data);
-  } catch (error) {
-    utils.logError('xhr construction', error);}
   }
 }
