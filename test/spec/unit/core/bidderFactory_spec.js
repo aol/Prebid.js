@@ -11,7 +11,7 @@ const MOCK_BIDS_REQUEST = {
   bids: [
     {
       bidId: 1,
-      requestId: 'first-bid-id',
+      auctionId: 'first-bid-id',
       adUnitCode: 'mock/placement',
       params: {
         param: 5
@@ -19,7 +19,7 @@ const MOCK_BIDS_REQUEST = {
     },
     {
       bidId: 2,
-      requestId: 'second-bid-id',
+      auctionId: 'second-bid-id',
       adUnitCode: 'mock/placement2',
       params: {
         badParam: 6
@@ -612,7 +612,7 @@ describe('validate bid response: ', () => {
     let bidRequest = {
       bids: [{
         bidId: 1,
-        requestId: 'first-bid-id',
+        auctionId: 'first-bid-id',
         adUnitCode: 'mock/placement',
         params: {
           param: 5
@@ -649,7 +649,7 @@ describe('validate bid response: ', () => {
     let bidRequest = {
       bids: [{
         bidId: 1,
-        requestId: 'first-bid-id',
+        auctionId: 'first-bid-id',
         adUnitCode: 'mock/placement',
         params: {
           param: 5
@@ -685,7 +685,7 @@ describe('validate bid response: ', () => {
     let bidRequest = {
       bids: [{
         bidId: 1,
-        requestId: 'first-bid-id',
+        auctionId: 'first-bid-id',
         adUnitCode: 'mock/placement',
         params: {
           param: 5
@@ -720,7 +720,7 @@ describe('validate bid response: ', () => {
       bids: [{
         bidder: CODE,
         bidId: 1,
-        requestId: 'first-bid-id',
+        auctionId: 'first-bid-id',
         adUnitCode: 'mock/placement',
         params: {
           param: 5

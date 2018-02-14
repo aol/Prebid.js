@@ -45,7 +45,7 @@ describe('adapterManager tests', () => {
     it('should log an error if a bidder is used that does not exist', () => {
       let bidRequests = [{
         'bidderCode': 'appnexus',
-        'requestId': '1863e370099523',
+        'auctionId': '1863e370099523',
         'bidderRequestId': '2946b569352ef2',
         'tid': '34566b569352ef2',
         'bids': [
@@ -59,7 +59,7 @@ describe('adapterManager tests', () => {
             'sizes': [[728, 90], [970, 70]],
             'bidId': '392b5a6b05d648',
             'bidderRequestId': '2946b569352ef2',
-            'requestId': '1863e370099523',
+            'auctionId': '1863e370099523',
             'startTime': 1462918897462,
             'status': 1,
             'transactionId': 'fsafsa'
@@ -73,7 +73,7 @@ describe('adapterManager tests', () => {
             'sizes': [[300, 250], [300, 600]],
             'bidId': '4dccdc37746135',
             'bidderRequestId': '2946b569352ef2',
-            'requestId': '1863e370099523',
+            'auctionId': '1863e370099523',
             'startTime': 1462918897463,
             'status': 1,
             'transactionId': 'fsafsa'
@@ -122,10 +122,88 @@ describe('adapterManager tests', () => {
     it('invokes callBids on the S2S adapter', () => {
       let bidRequests = [{
         'bidderCode': 'appnexus',
-        'requestId': '1863e370099523',
+        'auctionId': '1863e370099523',
         'bidderRequestId': '2946b569352ef2',
         'tid': '34566b569352ef2',
         'src': 's2s',
+        'adUnitsS2SCopy': [
+          {
+            'code': '/19968336/header-bid-tag1',
+            'sizes': [
+              {
+                'w': 728,
+                'h': 90
+              },
+              {
+                'w': 970,
+                'h': 90
+              }
+            ],
+            'bids': [
+              {
+                'bidder': 'appnexus',
+                'params': {
+                  'placementId': '543221',
+                  'test': 'me'
+                },
+                'placementCode': '/19968336/header-bid-tag1',
+                'sizes': [
+                  [
+                    728,
+                    90
+                  ],
+                  [
+                    970,
+                    90
+                  ]
+                ],
+                'bidId': '68136e1c47023d',
+                'bidderRequestId': '55e24a66bed717',
+                'auctionId': '1ff753bd4ae5cb',
+                'startTime': 1463510220995,
+                'status': 1,
+                'bid_id': '378a8914450b334'
+              }
+            ]
+          },
+          {
+            'code': '/19968336/header-bid-tag-0',
+            'sizes': [
+              {
+                'w': 300,
+                'h': 250
+              },
+              {
+                'w': 300,
+                'h': 600
+              }
+            ],
+            'bids': [
+              {
+                'bidder': 'appnexus',
+                'params': {
+                  'placementId': '5324321'
+                },
+                'placementCode': '/19968336/header-bid-tag-0',
+                'sizes': [
+                  [
+                    300,
+                    250
+                  ],
+                  [
+                    300,
+                    600
+                  ]
+                ],
+                'bidId': '7e5d6af25ed188',
+                'bidderRequestId': '55e24a66bed717',
+                'auctionId': '1ff753bd4ae5cb',
+                'startTime': 1463510220996,
+                'bid_id': '387d9d9c32ca47c'
+              }
+            ]
+          }
+        ],
         'bids': [
           {
             'bidder': 'appnexus',
@@ -146,7 +224,7 @@ describe('adapterManager tests', () => {
             ],
             'bidId': '392b5a6b05d648',
             'bidderRequestId': '2946b569352ef2',
-            'requestId': '1863e370099523',
+            'auctionId': '1863e370099523',
             'startTime': 1462918897462,
             'status': 1,
             'transactionId': 'fsafsa'
@@ -169,7 +247,7 @@ describe('adapterManager tests', () => {
             ],
             'bidId': '4dccdc37746135',
             'bidderRequestId': '2946b569352ef2',
-            'requestId': '1863e370099523',
+            'auctionId': '1863e370099523',
             'startTime': 1462918897463,
             'status': 1,
             'transactionId': 'fsafsa'
@@ -207,10 +285,88 @@ describe('adapterManager tests', () => {
 
       let bidRequests = [{
         'bidderCode': 'appnexus',
-        'requestId': '1863e370099523',
+        'auctionId': '1863e370099523',
         'bidderRequestId': '2946b569352ef2',
         'tid': '34566b569352ef2',
         'src': 's2s',
+        'adUnitsS2SCopy': [
+          {
+            'code': '/19968336/header-bid-tag1',
+            'sizes': [
+              {
+                'w': 728,
+                'h': 90
+              },
+              {
+                'w': 970,
+                'h': 90
+              }
+            ],
+            'bids': [
+              {
+                'bidder': 'appnexus',
+                'params': {
+                  'placementId': '543221',
+                  'test': 'me'
+                },
+                'placementCode': '/19968336/header-bid-tag1',
+                'sizes': [
+                  [
+                    728,
+                    90
+                  ],
+                  [
+                    970,
+                    90
+                  ]
+                ],
+                'bidId': '68136e1c47023d',
+                'bidderRequestId': '55e24a66bed717',
+                'auctionId': '1ff753bd4ae5cb',
+                'startTime': 1463510220995,
+                'status': 1,
+                'bid_id': '378a8914450b334'
+              }
+            ]
+          },
+          {
+            'code': '/19968336/header-bid-tag-0',
+            'sizes': [
+              {
+                'w': 300,
+                'h': 250
+              },
+              {
+                'w': 300,
+                'h': 600
+              }
+            ],
+            'bids': [
+              {
+                'bidder': 'appnexus',
+                'params': {
+                  'placementId': '5324321'
+                },
+                'placementCode': '/19968336/header-bid-tag-0',
+                'sizes': [
+                  [
+                    300,
+                    250
+                  ],
+                  [
+                    300,
+                    600
+                  ]
+                ],
+                'bidId': '7e5d6af25ed188',
+                'bidderRequestId': '55e24a66bed717',
+                'auctionId': '1ff753bd4ae5cb',
+                'startTime': 1463510220996,
+                'bid_id': '387d9d9c32ca47c'
+              }
+            ]
+          }
+        ],
         'bids': [
           {
             'bidder': 'appnexus',
@@ -231,7 +387,7 @@ describe('adapterManager tests', () => {
             ],
             'bidId': '392b5a6b05d648',
             'bidderRequestId': '2946b569352ef2',
-            'requestId': '1863e370099523',
+            'auctionId': '1863e370099523',
             'startTime': 1462918897462,
             'status': 1,
             'transactionId': 'fsafsa'
@@ -254,7 +410,7 @@ describe('adapterManager tests', () => {
             ],
             'bidId': '4dccdc37746135',
             'bidderRequestId': '2946b569352ef2',
-            'requestId': '1863e370099523',
+            'auctionId': '1863e370099523',
             'startTime': 1462918897463,
             'status': 1,
             'transactionId': 'fsafsa'
