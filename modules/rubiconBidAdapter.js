@@ -73,7 +73,7 @@ utils._each(sizeMap, (item, key) => sizeMap[item] = key);
 export const spec = {
   code: 'rubicon',
   aliases: ['rubiconLite'],
-  supportedMediaTypes: ['video'],
+  supportedMediaTypes: ['banner', 'video'],
   /**
    * @param {object} bid
    * @return boolean
@@ -112,12 +112,14 @@ export const spec = {
       if (bidRequest.mediaType === 'video') {
         let params = bidRequest.params;
         let size = parseSizes(bidRequest);
+        let page_rf = !params.referrer ? utils.getTopWindowUrl() : params.referrer;
 
         let data = {
-          page_url: !params.referrer ? utils.getTopWindowUrl() : params.referrer,
+          page_url: params.secure ? page_rf.replace(/^http:/i, 'https:') : page_rf,
           resolution: _getScreenResolution(),
           account_id: params.accountId,
           integration: INTEGRATION,
+          'x_source.tid': bidRequest.transactionId,
           timeout: bidderRequest.timeout - (Date.now() - bidderRequest.auctionStart + TIMEOUT_BUFFER),
           stash_creatives: true,
           ae_pass_through_parameters: params.video.aeParams,
@@ -192,7 +194,7 @@ export const spec = {
         'rp_floor', floor,
         'rp_secure', isSecure() ? '1' : '0',
         'tk_flint', INTEGRATION,
-        'tid', bidRequest.transactionId,
+        'x_source.tid', bidRequest.transactionId,
         'p_screen_res', _getScreenResolution(),
         'kw', keywords,
         'tk_user_key', userId
@@ -264,6 +266,7 @@ export const spec = {
         requestId: bidRequest.bidId,
         currency: 'USD',
         creativeId: ad.creative_id,
+        mediaType: ad.creative_type,
         cpm: ad.cpm || 0,
         dealId: ad.deal,
         ttl: 300, // 5 minutes
@@ -274,6 +277,7 @@ export const spec = {
         bid.height = bidRequest.params.video.playerHeight;
         bid.vastUrl = ad.creative_depot_url;
         bid.impression_id = ad.impression_id;
+        bid.videoCacheKey = ad.impression_id;
       } else {
         bid.ad = _renderCreative(ad.script, ad.impression_id);
         [bid.width, bid.height] = sizeMap[ad.size_id].split('x').map(num => Number(num));
@@ -356,14 +360,13 @@ function parseSizes(bid) {
     }
     return size;
   }
-  return masSizeOrdering(Array.isArray(params.sizes)
-    ? params.sizes.map(size => (sizeMap[size] || '').split('x')) : bid.sizes
-  );
+
+  let sizes = Array.isArray(params.sizes) ? params.sizes : mapSizes(bid.sizes)
+
+  return masSizeOrdering(sizes);
 }
 
-export function masSizeOrdering(sizes) {
-  const MAS_SIZE_PRIORITY = [15, 2, 9];
-
+function mapSizes(sizes) {
   return utils.parseSizesInput(sizes)
     // map sizes while excluding non-matches
     .reduce((result, size) => {
@@ -372,25 +375,30 @@ export function masSizeOrdering(sizes) {
         result.push(mappedSize);
       }
       return result;
-    }, [])
-    .sort((first, second) => {
-      // sort by MAS_SIZE_PRIORITY priority order
-      const firstPriority = MAS_SIZE_PRIORITY.indexOf(first);
-      const secondPriority = MAS_SIZE_PRIORITY.indexOf(second);
+    }, []);
+}
 
-      if (firstPriority > -1 || secondPriority > -1) {
-        if (firstPriority === -1) {
-          return 1;
-        }
-        if (secondPriority === -1) {
-          return -1;
-        }
-        return firstPriority - secondPriority;
+export function masSizeOrdering(sizes) {
+  const MAS_SIZE_PRIORITY = [15, 2, 9];
+
+  return sizes.sort((first, second) => {
+    // sort by MAS_SIZE_PRIORITY priority order
+    const firstPriority = MAS_SIZE_PRIORITY.indexOf(first);
+    const secondPriority = MAS_SIZE_PRIORITY.indexOf(second);
+
+    if (firstPriority > -1 || secondPriority > -1) {
+      if (firstPriority === -1) {
+        return 1;
       }
+      if (secondPriority === -1) {
+        return -1;
+      }
+      return firstPriority - secondPriority;
+    }
 
-      // and finally ascending order
-      return first - second;
-    });
+    // and finally ascending order
+    return first - second;
+  });
 }
 
 var hasSynced = false;

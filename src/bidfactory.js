@@ -1,3 +1,4 @@
+import { STATUS } from 'src/constants.json';
 var utils = require('./utils.js');
 
 /**
@@ -16,6 +17,7 @@ var utils = require('./utils.js');
  */
 function Bid(statusCode, bidRequest) {
   var _bidId = (bidRequest && bidRequest.bidId) || utils.getUniqueIdentifierStr();
+  var _bidSrc = (bidRequest && bidRequest.src) || 'client';
   var _statusCode = statusCode || 0;
 
   this.bidderCode = (bidRequest && bidRequest.bidder) || '';
@@ -24,6 +26,7 @@ function Bid(statusCode, bidRequest) {
   this.statusMessage = _getStatus();
   this.adId = _bidId;
   this.mediaType = 'banner';
+  this.source = _bidSrc;
 
   function _getStatus() {
     switch (_statusCode) {
@@ -45,6 +48,10 @@ function Bid(statusCode, bidRequest) {
   // returns the size of the bid creative. Concatenation of width and height by ‘x’.
   this.getSize = function () {
     return this.width + 'x' + this.height;
+  };
+
+  this.isEmptyBid = function () {
+    return _statusCode === STATUS.NO_BID;
   };
 }
 
