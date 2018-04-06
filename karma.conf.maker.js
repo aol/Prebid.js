@@ -35,11 +35,12 @@ function newPluginsArray(browserstack) {
     'karma-expect',
     'karma-mocha',
     'karma-requirejs',
-    'karma-sinon-ie',
+    'karma-sinon',
     'karma-sourcemap-loader',
     'karma-spec-reporter',
     'karma-junit-reporter',
     'karma-webpack',
+    'karma-mocha-reporter'
   ];
   if (browserstack) {
     plugins.push('karma-browserstack-launcher');
@@ -59,6 +60,8 @@ function setReporters(karmaConf, codeCoverage, browserstack) {
   if (browserstack) {
     karmaConf.reporters = ['spec', 'junit'];
     karmaConf.specReporter = {
+      maxLogLines: 100,
+      suppressErrorSummary: false,
       suppressSkipped: false,
       suppressPassed: true
     };
@@ -100,10 +103,8 @@ function setBrowsers(karmaConf, browserstack) {
 module.exports = function(codeCoverage, browserstack, watchMode, file) {
   var webpackConfig = newWebpackConfig(codeCoverage);
   var plugins = newPluginsArray(browserstack);
-  var files = [
-    'test/helpers/prebidGlobal.js',
-    file ? file : 'test/**/*_spec.js'
-  ];
+
+  var files = file ? ['test/helpers/prebidGlobal.js', file] : ['test/test_index.js'];
   // This file opens the /debug.html tab automatically.
   // It has no real value unless you're running --watch, and intend to do some debugging in the browser.
   if (watchMode) {
@@ -118,7 +119,6 @@ module.exports = function(codeCoverage, browserstack, watchMode, file) {
     webpackMiddleware: {
       noInfo: true
     },
-
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['es5-shim', 'mocha', 'expect', 'sinon'],
@@ -128,8 +128,7 @@ module.exports = function(codeCoverage, browserstack, watchMode, file) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*_spec.js': ['webpack', 'sourcemap'],
-      'test/helpers/prebidGlobal.js': ['webpack', 'sourcemap']
+      'test/test_index.js': ['webpack', 'sourcemap']
     },
 
     // web server port
