@@ -31,7 +31,7 @@ const SYNC_TYPES = {
   }
 };
 
-const pubapiTemplate = template`//${'host'}/pubapi/3.0/${'network'}/${'placement'}/${'pageid'}/${'sizeid'}/ADTECH;v=2;cmd=bid;cors=yes;alias=${'alias'};misc=${'misc'}${'bidfloor'}${'keyValues'}${'consentData'}`;
+const pubapiTemplate = template`//${'host'}/pubapi/3.0/${'network'}/${'placement'}/${'pageid'}/${'sizeid'}/ADTECH;v=2;cmd=bid;cors=yes;alias=${'alias'};misc=${'misc'};${'dynamicParams'}`;
 const nexageBaseApiTemplate = template`//${'host'}/bidRequest?`;
 const nexageGetApiTemplate = template`dcn=${'dcn'}&pos=${'pos'}&cmd=bid${'dynamicParams'}`;
 const MP_SERVER_MAP = {
@@ -46,6 +46,11 @@ const EMPTY_BID_CPM = 0;
 
 $$PREBID_GLOBAL$$.aolGlobals = {
   pixelsDropped: false
+};
+
+const NUMERIC_VALUES = {
+  TRUE: 1,
+  FALSE: 0
 };
 
 let showCpmAdjustmentWarning = (function() {
@@ -100,20 +105,6 @@ function parsePixelItems(pixels) {
   }
 
   return pixelsItems;
-}
-
-function formatMarketplaceBidFloor(bidFloor) {
-  return (typeof bidFloor !== 'undefined') ? `;bidfloor=${bidFloor.toString()}` : '';
-}
-
-function formatMarketplaceKeyValues(keyValues) {
-  let formattedKeyValues = '';
-
-  utils._each(keyValues, (value, key) => {
-    formattedKeyValues += `;kv${key}=${encodeURIComponent(value)}`;
-  });
-
-  return formattedKeyValues;
 }
 
 function _isMarketplaceBidder(bidder) {
@@ -220,21 +211,21 @@ export const spec = {
         };
         break;
 
-    case AOL_ENDPOINTS.MOBILE.POST:
-      bidRequest = {
-        url: this.buildOneMobileBaseUrl(bid),
-        method: 'POST',
-        ttl: ONE_MOBILE_TTL,
-        data: this.buildOpenRtbRequestData(bid, consentData),
-
-          contentType: 'application/json',options: {
-          customHeaders: {
-            'x-openrtb-version': '2.2'
+      case AOL_ENDPOINTS.MOBILE.POST:
+        bidRequest = {
+          url: this.buildOneMobileBaseUrl(bid),
+          method: 'POST',
+          ttl: ONE_MOBILE_TTL,
+          data: this.buildOpenRtbRequestData(bid, consentData),
+          contentType: 'application/json',
+          options: {
+            customHeaders: {
+              'x-openrtb-version': '2.2'
+            }
           }
-        }
-      };
-      break;
-  }
+        };
+        break;
+    }
 
     bidRequest.bidderCode = bid.bidder;
     bidRequest.bidId = bid.bidId;
@@ -269,10 +260,8 @@ export const spec = {
       pageid: params.pageId || 0,
       sizeid: params.sizeId || 0,
       alias: params.alias || utils.getUniqueIdentifierStr(),
-      misc: new Date().getTime(), // cache busting,
-      bidfloor: formatMarketplaceBidFloor(params.bidFloor),
-      keyValues: formatMarketplaceKeyValues(params.keyValues),
-      consentData: this.formatMarketplaceConsentData(consentData)
+      misc: new Date().getTime(), // cache busting
+      dynamicParams: this.formatMarketplaceDynamicParams(params, consentData)
     });
   },
   buildOneMobileGetUrl(bid, consentData) {
@@ -289,15 +278,29 @@ export const spec = {
       host: bid.params.host || NEXAGE_SERVER
     });
   },
-  formatOneMobileDynamicParams(params = {}, consentData) {
-    if (this.isSecureProtocol()) {
-      params.secure = 1;
+  formatMarketplaceDynamicParams(params = {}, consentData) {
+    let queryParams = {};
+
+    if (params.bidFloor) {
+      queryParams.bidfloor = params.bidFloor;
     }
 
-    if (this.isConsentRequired(consentData)) {
-      params.euconsent = consentData.consentString;
-      params.gdpr = 1;
+    Object.assign(queryParams, this.formatKeyValues(params.keyValues));
+    Object.assign(queryParams, this.formatConsentData(consentData));
+
+    let paramsFormatted = '';
+    utils._each(queryParams, (value, key) => {
+      paramsFormatted += `${key}=${encodeURIComponent(value)};`;
+    });
+
+    return paramsFormatted;
+  },
+  formatOneMobileDynamicParams(params = {}, consentData) {
+    if (this.isSecureProtocol()) {
+      params.secure = NUMERIC_VALUES.TRUE;
     }
+
+    Object.assign(params, this.formatConsentData(consentData));
 
     let paramsFormatted = '';
     utils._each(params, (value, key) => {
@@ -313,27 +316,47 @@ export const spec = {
     };
 
     if (this.isConsentRequired(consentData)) {
-      openRtbObject.user = {
-        ext: {
-          consent: consentData.consentString
-        }
-      };
       openRtbObject.regs = {
         ext: {
-          gdpr: 1
+          gdpr: NUMERIC_VALUES.TRUE
         }
       };
+
+      if (consentData.consentString) {
+        openRtbObject.user = {
+          ext: {
+            consent: consentData.consentString
+          }
+        };
+      }
     }
 
     return openRtbObject;
   },
   isConsentRequired(consentData) {
-    return !!(consentData && consentData.consentString && consentData.gdprApplies);
+    return !!(consentData && consentData.gdprApplies);
   },
-  formatMarketplaceConsentData(consentData) {
-    let consentRequired = this.isConsentRequired(consentData);
+  formatKeyValues(keyValues) {
+    let keyValuesHash = {};
 
-    return consentRequired ? `;euconsent=${consentData.consentString};gdpr=1` : '';
+    utils._each(keyValues, (value, key) => {
+      keyValuesHash[`kv${key}`] = value;
+    });
+
+    return keyValuesHash;
+  },
+  formatConsentData(consentData) {
+    let params = {};
+
+    if (this.isConsentRequired(consentData)) {
+      params.gdpr = NUMERIC_VALUES.TRUE;
+
+      if (consentData.consentString) {
+        params.euconsent = consentData.consentString;
+      }
+    }
+
+    return params;
   },
 
   _parseBidResponse(response, bidRequest) {
