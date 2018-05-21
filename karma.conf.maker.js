@@ -145,7 +145,8 @@ module.exports = function(codeCoverage, browserstack, watchMode, file) {
 
     reporters: ['mocha'],
     mochaReporter: {
-      showDiff: true
+      showDiff: true,
+      output: 'minimal'
     },
 
     // Continuous Integration mode
