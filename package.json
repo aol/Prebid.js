@@ -19,10 +19,12 @@
   ],
   "globalVarName": "pbjs",
   "author": "the prebid.js contributors",
-  "contributors": [{
-    "name": "AOL Platforms",
-    "url": "http://www.aolplatforms.com/"
-  }],
+  "contributors": [
+    {
+      "name": "AOL Platforms",
+      "url": "http://www.aolplatforms.com/"
+    }
+  ],
   "license": "Apache-2.0",
   "engines": {
     "node": ">=4.0"
