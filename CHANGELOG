@@ -1,3 +1,10 @@
+AOL Prebid 2.9.0
+----------------
+Updated to Prebid 1.9.0
+Added GDPR support for AOL adapter.
+Added passing GDPR flag when consent string is not present.
+
+
 AOL Prebid 2.8.0
 ----------------
 Updated to Prebid 1.8.0
