@@ -10,7 +10,7 @@ import adapter from 'src/AnalyticsAdapter';
 import BIDDERS_IDS_MAP from 'modules/aolPartnersIds';
 import * as utils from 'src/utils';
 import events from 'src/events';
-import adaptermanager from 'src/adaptermanager';
+import { registerAnalyticsAdapter, gdprDataHandler } from 'src/adaptermanager';
 import { auctionManager } from 'src/auctionManager';
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
@@ -33,7 +33,7 @@ const EVENTS = {
   WIN: 2
 };
 
-let baseSchemaTemplate = template`${'protocol'}://${'host'}/hbevent/${'tagversion'}/${'network'}/${'placement'}/${'site'}/${'eventid'}/hbeventts=${'hbeventts'};cors=yes`;
+let baseSchemaTemplate = template`${'protocol'}://${'host'}/hbevent/${'tagversion'}/${'network'}/${'placement'}/${'site'}/${'eventid'}/hbeventts=${'hbeventts'};cors=yes${'consentData'}`;
 let auctionSchemaTemplate = template`;pubadid=${'pubadid'};hbauctionid=${'hbauctionid'};hbwinner=${'hbwinner'};hbprice=${'hbprice'}${'hbcur'}${'pubapi'};hbwinbidid=${'hbwinbidid'}`;
 let winSchemaTemplate = template`;hbauctioneventts=${'hbauctioneventts'};pubadid=${'pubadid'};hbauctionid=${'hbauctionid'};hbwinner=${'hbwinner'};pubcpm=${'pubcpm'}${'hbdealid'};hbbidid=${'hbbidid'}`;
 let bidderSchemaTemplate = template`;hbbidder=${'hbbidder'};hbbid=${'hbbid'};hbstatus=${'hbstatus'};hbtime=${'hbtime'}${'hbdealid'};hbbidid=${'hbbidid'}`;
@@ -169,7 +169,8 @@ let aolAnalyticsAdapter = Object.assign(adapter({
       placement: aolParams.placement,
       site: aolParams.pageId || 0,
       eventid: eventId,
-      hbeventts: Math.floor(Date.now() / 1000) // Unix timestamp in seconds.
+      hbeventts: Math.floor(Date.now() / 1000), // Unix timestamp in seconds.
+      consentData: this.formatConsentData()
     };
   },
 
@@ -210,29 +211,42 @@ let aolAnalyticsAdapter = Object.assign(adapter({
     };
   },
 
-  buildEventUrl(event, adUnit) {
-    let baseSchema, url;
+  formatConsentData() {
+    let consentData = gdprDataHandler.getConsentData();
 
-    switch (event) {
+    if (consentData && consentData.gdprApplies) {
+      let formattedData = ';gdpr=1';
+
+      if (consentData.consentString) {
+        formattedData += `;euconsent=${consentData.consentString}`
+      }
+
+      return formattedData;
+    }
+
+    return '';
+  },
+
+  buildEventUrl(eventId, adUnit) {
+    let baseSchema = this.getBaseSchema(eventId, adUnit);
+    let url = baseSchemaTemplate(baseSchema);
+
+    switch (eventId) {
       case EVENTS.AUCTION:
-
-        baseSchema = this.getBaseSchema(EVENTS.AUCTION, adUnit);
         let auctionSchema = this.getAuctionSchema(adUnit);
         adUnit.auctionParams = {
           hbauctioneventts: baseSchema.hbeventts,
           hbauctionid: auctionSchema.hbauctionid
         };
-        url = baseSchemaTemplate(baseSchema) + auctionSchemaTemplate(auctionSchema);
+        url += auctionSchemaTemplate(auctionSchema);
         adUnit.bids.forEach(bid => {
-          url = url + bidderSchemaTemplate(this.getBidderSchema(bid));
+          url += bidderSchemaTemplate(this.getBidderSchema(bid));
         });
         return url;
 
       case EVENTS.WIN:
-
-        baseSchema = this.getBaseSchema(EVENTS.WIN, adUnit);
         let winSchema = this.getWinSchema(adUnit);
-        url = baseSchemaTemplate(baseSchema) + winSchemaTemplate(winSchema);
+        url += winSchemaTemplate(winSchema);
         return url;
     }
   },
@@ -261,7 +275,7 @@ function template(strings, ...keys) {
     let dict = values[values.length - 1] || {};
     let result = [strings[0]];
     keys.forEach(function(key, i) {
-      let value = Number.isInteger(key) ? values[key] : dict[key];
+      let value = utils.isInteger(key) ? values[key] : dict[key];
       result.push(value, strings[i + 1]);
     });
     return result.join('');
@@ -348,7 +362,7 @@ function addAolParams(adUnit, adUnitsConf, bidsReceived) {
   return adUnit;
 }
 
-adaptermanager.registerAnalyticsAdapter({
+registerAnalyticsAdapter({
   adapter: aolAnalyticsAdapter,
   code: AOL_BIDDERS_CODES.aol
 });

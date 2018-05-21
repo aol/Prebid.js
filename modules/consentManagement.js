@@ -193,7 +193,7 @@ export function requestBidsHook(config, fn) {
  * @param {object} consentObject required; object returned by CMP that contains user's consent choices
  */
 function processCmpData(consentObject) {
-  if (!utils.isPlainObject(consentObject) || !utils.isStr(consentObject.metadata) || consentObject.metadata === '') {
+  if (!utils.isPlainObject(consentObject)) {
     cmpFailed(`CMP returned unexpected value during lookup process; returned value was (${consentObject}).`);
   } else {
     clearTimeout(timer);
