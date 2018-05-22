@@ -15,6 +15,7 @@ import {
 } from 'test/fixtures/fixturesAnalytics';
 import * as utils from 'src/utils';
 import aolAnalytics from 'modules/aolAnalyticsAdapter';
+import { gdprDataHandler } from 'src/adaptermanager';
 
 const AUCTION_END = CONSTANTS.EVENTS.AUCTION_END;
 const BID_WON = CONSTANTS.EVENTS.BID_WON;
@@ -1427,6 +1428,46 @@ describe('AOL analytics adapter', () => {
       adUnit.adIdExtension = '!@#\'*()+!!!123legalSYMBOls|%:.-_&$56789EnD!@#\'*()+!!!';
 
       expect(aolAnalytics.formatAdIdWithExtension(adUnit)).to.equal(`${adUnit.code}-123legalSYMBOls|%:.-_&$56789EnD`);
+    });
+  });
+
+  describe('formatConsentData()', () => {
+    let getConsentDataStub;
+    beforeEach(() => {
+      getConsentDataStub = sinon.stub(gdprDataHandler, 'getConsentData')
+    });
+
+    afterEach(() => {
+      getConsentDataStub.restore();
+    });
+
+    it('should return empty string when consentData object is not present', () => {
+      getConsentDataStub.returns(null);
+      expect(aolAnalytics.formatConsentData()).to.equal('');
+    });
+
+    it('should return only formatted gdpr flag when gdprApplies equals true and consentString is not present', () => {
+      getConsentDataStub.returns({
+        consentString: null,
+        gdprApplies: true
+      });
+      expect(aolAnalytics.formatConsentData()).to.equal(';gdpr=1');
+    });
+
+    it('should return empty string when gdprApplies is present and consentRequired equals false', () => {
+      getConsentDataStub.returns({
+        consentString: 'consent-string',
+        gdprApplies: false
+      });
+      expect(aolAnalytics.formatConsentData()).to.equal('');
+    });
+
+    it('should return formatted string when gdprApplies is present and consentRequired equals true', () => {
+      getConsentDataStub.returns({
+        consentString: 'consent-test',
+        gdprApplies: true
+      });
+      expect(aolAnalytics.formatConsentData()).to.equal(';gdpr=1;euconsent=consent-test');
     });
   });
 });
