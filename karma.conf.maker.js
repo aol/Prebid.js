@@ -39,8 +39,7 @@ function newPluginsArray(browserstack) {
     'karma-sourcemap-loader',
     'karma-spec-reporter',
     'karma-junit-reporter',
-    'karma-webpack',
-    'karma-mocha-reporter'
+    'karma-webpack'
   ];
   if (browserstack) {
     plugins.push('karma-browserstack-launcher');
