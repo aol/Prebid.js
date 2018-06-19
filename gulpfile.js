@@ -12,6 +12,7 @@ var uglify = require('gulp-uglify');
 var clean = require('gulp-clean');
 var KarmaServer = require('karma').Server;
 var karmaConfMaker = require('./karma.conf.maker');
+var karmaBaseConf = require('./karma.base.conf');
 var opens = require('open');
 var webpackConfig = require('./webpack.conf');
 var helpers = require('./gulpHelpers');
@@ -191,6 +192,10 @@ gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
     .pipe(replace(/(,)?(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, ';$2'))
     .pipe(header(banner, { prebid: prebid }))
     .pipe(gulp.dest('build/dist'));
+});
+
+gulp.task('aol-test', ['clean'], function (done) {
+  return new KarmaServer(karmaBaseConf, newKarmaCallback(done)).start();
 });
 
 // Run the unit tests.
