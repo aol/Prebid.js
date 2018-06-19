@@ -29,8 +29,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var through = require('through2');
 var fs = require('fs');
 var jsEscape = require('gulp-js-escape');
-const karmaBaseConf = require('./karma.base.conf');
-const karmaSaucelabsConf = require('./karma.saucelabs.conf');
+const karmaConfigProvider = require('./karmaConfigProvider');
 
 var prebid = require('./package.json');
 var banner = '/* <%= prebid.name %> v<%= prebid.version %>*/\n';
@@ -179,30 +178,6 @@ gulp.task('webpack', ['clean'], function () {
     .pipe(connect.reload());
 });
 
-gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
-  return gulp.src('build/dev/prebid.js')
-    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)/g, '$1window=window;'))
-    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)/g, '$1window=window;'))
-    .pipe(uglify({
-      output: {
-        comments: /^!/
-      }
-    }))
-    .pipe(optimizejs())
-    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)\s*window=window(;|,)?/g, '$1'))
-    .pipe(replace(/(,)?(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, ';$2'))
-    .pipe(header(banner, { prebid: prebid }))
-    .pipe(gulp.dest('build/dist'));
-});
-
-gulp.task('aol-test', ['clean'], function (done) {
-  new KarmaServer(karmaBaseConf, newKarmaCallback(done)).start();
-});
-
-gulp.task('aol-test-cloud', ['clean'], function (done) {
-  return new KarmaServer(karmaSaucelabsConf, newKarmaCallback(done)).start();
-});
-
 // Run the unit tests.
 //
 // By default, this runs in headless chrome.
@@ -346,6 +321,30 @@ gulp.task('escape-postbid-config', function() {
   gulp.src('./integrationExamples/postbid/oas/postbid-config.js')
     .pipe(jsEscape())
     .pipe(gulp.dest('build/postbid/'));
+});
+
+gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
+  return gulp.src('build/dev/prebid.js')
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)/g, '$1window=window;'))
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)/g, '$1window=window;'))
+    .pipe(uglify({
+      output: {
+        comments: /^!/
+      }
+    }))
+    .pipe(optimizejs())
+    .pipe(replace(/(\/\*!(ANALYTICS\s)?ADAPTER BEGIN \w+\*\/)\s*window=window(;|,)?/g, '$1'))
+    .pipe(replace(/(,)?(\/\*!(ANALYTICS\s)?ADAPTER END \w+\*\/)\s*window=window(;|,)?/g, ';$2'))
+    .pipe(header(banner, { prebid: prebid }))
+    .pipe(gulp.dest('build/dist'));
+});
+
+gulp.task('test-unit', ['clean'], function (done) {
+  new KarmaServer(karmaConfigProvider.generateDefaultConfig(), newKarmaCallback(done)).start();
+});
+
+gulp.task('test-unit-cloud', ['clean'], function (done) {
+  new KarmaServer(karmaConfigProvider.generateSaucelabsConfig(), newKarmaCallback(done)).start();
 });
 
 module.exports = nodeBundle;
