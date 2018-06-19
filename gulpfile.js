@@ -12,7 +12,6 @@ var uglify = require('gulp-uglify');
 var clean = require('gulp-clean');
 var KarmaServer = require('karma').Server;
 var karmaConfMaker = require('./karma.conf.maker');
-var karmaBaseConf = require('./karma.base.conf');
 var opens = require('open');
 var webpackConfig = require('./webpack.conf');
 var helpers = require('./gulpHelpers');
@@ -30,6 +29,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var through = require('through2');
 var fs = require('fs');
 var jsEscape = require('gulp-js-escape');
+const karmaBaseConf = require('./karma.base.conf');
+const karmaSaucelabsConf = require('./karma.saucelabs.conf');
 
 var prebid = require('./package.json');
 var banner = '/* <%= prebid.name %> v<%= prebid.version %>*/\n';
@@ -195,7 +196,11 @@ gulp.task('build-aol-bundle', ['build-bundle-dev'], () => {
 });
 
 gulp.task('aol-test', ['clean'], function (done) {
-  return new KarmaServer(karmaBaseConf, newKarmaCallback(done)).start();
+  new KarmaServer(karmaBaseConf, newKarmaCallback(done)).start();
+});
+
+gulp.task('aol-test-cloud', ['clean'], function (done) {
+  return new KarmaServer(karmaSaucelabsConf, newKarmaCallback(done)).start();
 });
 
 // Run the unit tests.

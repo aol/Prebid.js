@@ -1,0 +1,6 @@
+{
+  "sl_chrome": {
+    "base": "SauceLabs",
+    "browserName": "chrome"
+  }
+}

@@ -16,6 +16,8 @@ module.exports = {
     'test/test_index.js': ['webpack', 'sourcemap']
   },
 
+  singleRun: true,
+  reporters: ['mocha'],
   browsers: ['ChromeHeadless'],
 
   plugins: [
