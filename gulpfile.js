@@ -344,7 +344,11 @@ gulp.task('test-unit', ['clean'], function (done) {
 });
 
 gulp.task('test-unit-cloud', ['clean'], function (done) {
-  new KarmaServer(karmaConfigProvider.generateSaucelabsConfig(), newKarmaCallback(done)).start();
+  if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+    done('Make sure the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables are set.');
+  } else {
+    new KarmaServer(karmaConfigProvider.generateSaucelabsConfig(), newKarmaCallback(done)).start();
+  }
 });
 
 module.exports = nodeBundle;
