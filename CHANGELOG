@@ -3,6 +3,7 @@ AOL Prebid 2.11.0
 Updated to Prebid 1.11.0
 Added GDPR support fo AOL analytics adapter.
 Added passing GDPR flag when consent string is not present.
+Fixed wrong bid status issue for empty bids in AOL analytics adapter.
 
 
 AOL Prebid 2.10.0
