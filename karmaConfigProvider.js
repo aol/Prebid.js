@@ -1,6 +1,13 @@
 const webpackConfig = require('./webpack.conf');
 const browsers = require('./browsers.saucelabs');
 
+const BROWSER_TIMEOUTS = {
+  DISCONNECT: 10000,
+  NO_ACTIVITY: 240000
+};
+
+const BROWSER_DISCONNECT_TOLERANCE = 1;
+
 module.exports = {
   generateDefaultConfig () {
     return {
@@ -36,7 +43,13 @@ module.exports = {
         'karma-junit-reporter',
         'karma-webpack',
         'karma-mocha-reporter'
-      ]
+      ],
+
+      browserDisconnectTimeout:BROWSER_TIMEOUTS.DISCONNECT,
+      browserNoActivityTimeout: BROWSER_TIMEOUTS.NO_ACTIVITY,
+      captureTimeout: BROWSER_TIMEOUTS.NO_ACTIVITY,
+
+      browserDisconnectTolerance: BROWSER_DISCONNECT_TOLERANCE
     }
   },
 
