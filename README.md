@@ -1,4 +1,4 @@
-[AOL Container Tag Library](http://www.aolplatforms.com/header-bidding-solution)
+[Oath Container Library](http://www.aolplatforms.com/header-bidding-solution)
 ===========================
 
 This is a fork of Prebid.js made by [AOL](http://www.aolplatforms.com/).
