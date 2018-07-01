@@ -8,19 +8,19 @@ and more information on its unique features. Here is just a brief list of differ
 - AOL adapter
     - `onemobile` - alias for One Mobile endpoint
     - `onedisplay` - alias for One Display endpoint
-- Multiple versions available, hosted on CDN
+- Multiple versions available, CDN hosted
 - Auto-updates for
-    - New Backwards-compatible features
+    - New backwards-compatible features
     - Bug fixes
 - Dynamic bidder injection, enabling an optimal download size
 - Reports on how the auctions are performing
 - Version numbers separate from official Prebid
 
-Container Tag library is available on the following URL (works fine with http as well as https):
+Container library is available on the following URL (works fine with http as well as https):
 
     vlibs.advertising.com/prebid/adapters=appnexus,openx;/prebid-2.x.x.js
 
-This URL is designed specifically for the Container Tag library and it supports two magic features:
+This URL is designed specifically for the Container library and it supports two magic features:
 
 1. Request time injection of Prebid adapters (AOL adapter included by default)
 2. Delivery of latest available major version (2.x.x)
