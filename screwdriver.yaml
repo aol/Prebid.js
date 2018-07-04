@@ -1,0 +1,26 @@
+# Shared config all jobs will inherit.
+shared:
+  # Docker image - https://hub.docker.com/r/library/node/
+  image: node:6
+  settings:
+    slack:
+      channels:
+        - 'craft-builds'
+      statuses:
+        - SUCCESS
+        - FAILURE
+  environment:
+    NPM_VERSION: 5.6.0
+  secrets:
+    - SAUCE_USERNAME
+    - SAUCE_ACCESS_KEY
+
+
+jobs:
+  test:
+    requires: [~pr, ~commit]
+    steps:
+      - prepare_environment: npm install -g "npm@$NPM_VERSION"
+      - install_global_deps: npm install -g gulp-cli
+      - install: npm install
+      - test: gulp test-unit-cloud
