@@ -1,6 +1,8 @@
 [Oath Container Library](http://www.aolplatforms.com/header-bidding-solution)
 ===========================
 
+[![Build Status](https://api.travis-ci.org/aol/Prebid.js.svg?branch=master)](https://travis-ci.org/aol/Prebid.js)
+
 This is a fork of Prebid.js made by [AOL](http://www.aolplatforms.com/).
 Check the [AOL Platforms website](http://www.aolplatforms.com/header-bidding-solution) for documentation
 and more information on its unique features. Here is just a brief list of differences to the official Prebid:
@@ -30,7 +32,7 @@ This URL is designed specifically for the Container library and it supports two 
 ---
 
 
-[![Build Status](https://api.travis-ci.org/aol/Prebid.js.svg?branch=master)](https://travis-ci.org/aol/Prebid.js)
+[![Build Status](https://api.travis-ci.org/prebid/Prebid.js.svg?branch=master)](https://travis-ci.org/prebid/Prebid.js)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/prebid/Prebid.js.svg)](http://isitmaintained.com/project/prebid/Prebid.js "Percentage of issues still open")
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/prebid/Prebid.js.svg)](http://isitmaintained.com/project/prebid/Prebid.js "Average time to resolve an issue")
 [![Code Climate](https://codeclimate.com/github/prebid/Prebid.js/badges/gpa.svg)](https://codeclimate.com/github/prebid/Prebid.js)
