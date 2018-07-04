@@ -1,37 +1,38 @@
-[AOL Container Tag Library](http://www.aolplatforms.com/header-bidding-solution)
+[Oath Container Library](http://www.aolplatforms.com/header-bidding-solution)
 ===========================
 
-This is a fork of Prebid.js made by [AOL](http://www.aolplatforms.com/). 
-Check the [AOL Platforms website](http://www.aolplatforms.com/header-bidding-solution) for documentation 
+[![Build Status](https://api.travis-ci.org/aol/Prebid.js.svg?branch=master)](https://travis-ci.org/aol/Prebid.js)
+
+This is a fork of Prebid.js made by [AOL](http://www.aolplatforms.com/).
+Check the [AOL Platforms website](http://www.aolplatforms.com/header-bidding-solution) for documentation
 and more information on its unique features. Here is just a brief list of differences to the official Prebid:
 
-- Reports on how the auctions are performing
-- Per-partner (per-adapter) timeouts
 - AOL adapter
-    - Optimized - no additional request (Plan to include this into official Prebid)
-    - Hits v2 pubapi endpoint (config on the backend)
-    - Supports new `region` configuation option instead of `server`
-- Auto-updates - by using SemVer Server
-    - New Backwards-compatible features
+    - `onemobile` - alias for One Mobile endpoint
+    - `onedisplay` - alias for One Display endpoint
+- Multiple versions available, CDN hosted
+- Auto-updates for
+    - New backwards-compatible features
     - Bug fixes
-- Adapters specified in the library URL
+- Dynamic bidder injection, enabling an optimal download size
+- Reports on how the auctions are performing
 - Version numbers separate from official Prebid
 
-Container Tag library is available on the following URL (works fine with http as well as https):
+Container library is available on the following URL (works fine with http as well as https):
 
-    vlibs.advertising.com/prebid/adapters=appnexus,openx;/prebid-1.x.x.js
+    vlibs.advertising.com/prebid/adapters=appnexus,openx;/prebid-2.x.x.js
 
-This URL is designed specifically for the Container Tag library and it supports two magic features:
+This URL is designed specifically for the Container library and it supports two magic features:
 
 1. Request time injection of Prebid adapters (AOL adapter included by default)
-2. Delivery of latest available major version (1.x.x)
+2. Delivery of latest available major version (2.x.x)
 
 **Here continues the original README:**
 
 ---
 
 
-[![Build Status](https://api.travis-ci.org/aol/Prebid.js.svg?branch=master)](https://travis-ci.org/prebid/Prebid.js)
+[![Build Status](https://api.travis-ci.org/prebid/Prebid.js.svg?branch=master)](https://travis-ci.org/prebid/Prebid.js)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/prebid/Prebid.js.svg)](http://isitmaintained.com/project/prebid/Prebid.js "Percentage of issues still open")
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/prebid/Prebid.js.svg)](http://isitmaintained.com/project/prebid/Prebid.js "Average time to resolve an issue")
 [![Code Climate](https://codeclimate.com/github/prebid/Prebid.js/badges/gpa.svg)](https://codeclimate.com/github/prebid/Prebid.js)
@@ -94,11 +95,11 @@ Building with just these adapters will result in a smaller bundle which should a
 - Then run the build:
 
         $ gulp build --modules=openxBidAdapter,rubiconBidAdapter,sovrnBidAdapter
-        
+
 Alternatively, a `.json` file can be specified that contains a list of modules you would like to include.
 
     $ gulp build --modules=modules.json
-        
+
 With `modules.json` containing the following
 ```json modules.json
 [
