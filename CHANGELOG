@@ -1,3 +1,8 @@
+AOL Prebid 2.12.0
+Fixed dropping pixels when creatives are served into safe frames.
+Improved public documentation.
+
+
 AOL Prebid 2.11.0
 ----------------
 Updated to Prebid 1.11.0
