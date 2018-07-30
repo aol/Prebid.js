@@ -1,3 +1,7 @@
+AOL Prebid 2.14.0
+Updated to Prebid 1.13.0.
+
+
 AOL Prebid 2.13.0
 Fixed dropping pixels when userSyncOn="bidResponse".
 Updated to Prebid 1.12.0.
