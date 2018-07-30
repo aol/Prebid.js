@@ -506,7 +506,7 @@ describe('AolAdapter', () => {
   });
 
   describe('getUserSyncs()', () => {
-    let bidResponse;
+    let serverResponses;
     let bidRequest;
 
     beforeEach(() => {
@@ -516,14 +516,19 @@ describe('AolAdapter', () => {
           userSyncOn: 'bidResponse'
         },
       });
-      bidResponse = getDefaultBidResponse();
+
+      let bidResponse = getDefaultBidResponse();
       bidResponse.ext = {
         pixels: getPixels()
       };
+
+      serverResponses = [
+        {body: bidResponse}
+      ];
     });
 
     it('should return user syncs only if userSyncOn equals to "bidResponse"', () => {
-      let userSyncs = spec.getUserSyncs({}, [bidResponse], bidRequest);
+      let userSyncs = spec.getUserSyncs({}, serverResponses, bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
       expect(userSyncs).to.deep.equal([
@@ -535,16 +540,16 @@ describe('AolAdapter', () => {
     it('should not return user syncs if it has already been returned', () => {
       $$PREBID_GLOBAL$$.aolGlobals.pixelsDropped = true;
 
-      let userSyncs = spec.getUserSyncs({}, [bidResponse], bidRequest);
+      let userSyncs = spec.getUserSyncs({}, serverResponses, bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.true;
       expect(userSyncs).to.deep.equal([]);
     });
 
     it('should not return user syncs if pixels are not present', () => {
-      bidResponse.ext.pixels = null;
+      serverResponses[0].body.ext.pixels = null;
 
-      let userSyncs = spec.getUserSyncs({}, [bidResponse], bidRequest);
+      let userSyncs = spec.getUserSyncs({}, serverResponses, bidRequest);
 
       expect($$PREBID_GLOBAL$$.aolGlobals.pixelsDropped).to.be.false;
       expect(userSyncs).to.deep.equal([]);

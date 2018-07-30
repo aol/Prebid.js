@@ -177,8 +177,8 @@ export const spec = {
       }
     }
   },
-  getUserSyncs(options, bidResponses) {
-    let bidResponse = bidResponses[0];
+  getUserSyncs(options, serverResponses) {
+    const bidResponse = !utils.isEmpty(serverResponses) && serverResponses[0].body;
 
     if (config.getConfig('aol.userSyncOn') === EVENTS.BID_RESPONSE) {
       if (!$$PREBID_GLOBAL$$.aolGlobals.pixelsDropped && bidResponse && bidResponse.ext && bidResponse.ext.pixels) {
