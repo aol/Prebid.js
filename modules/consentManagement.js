@@ -221,8 +221,7 @@ function processCmpData(consentObject, hookConfig) {
   if (
     (typeof gdprApplies !== 'boolean') ||
     (gdprApplies === true &&
-      !(utils.isStr(consentObject.getConsentData.consentData) &&
-        utils.isPlainObject(consentObject.getVendorConsents) &&
+      !(utils.isPlainObject(consentObject.getVendorConsents) &&
         Object.keys(consentObject.getVendorConsents).length > 1
       )
     )
