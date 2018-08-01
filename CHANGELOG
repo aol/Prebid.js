@@ -1,3 +1,28 @@
+AOL Prebid 2.18.0
+Updated to Prebid 1.17.0.
+
+
+AOL Prebid 2.17.0
+Updated to Prebid 1.16.0.
+
+
+AOL Prebid 2.16.0
+Updated to Prebid 1.15.0.
+
+
+AOL Prebid 2.15.0
+Updated to Prebid 1.14.0.
+
+
+AOL Prebid 2.14.0
+Updated to Prebid 1.13.0.
+
+
+AOL Prebid 2.13.0
+Fixed dropping pixels when userSyncOn="bidResponse".
+Updated to Prebid 1.12.0.
+
+
 AOL Prebid 2.12.0
 Fixed dropping pixels when creatives are served into safe frames.
 Improved public documentation.
